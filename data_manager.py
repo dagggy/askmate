@@ -6,8 +6,12 @@ and use generic functions from connection.py.
 from datetime import datetime
 import time
 import database_common
+'''
+QUESTION_HEADERS = ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']
+ANSWER_HEADERS = ['id', 'submission_time', 'vote_number', 'question_id', 'message', 'image']
+'''
 
-
+### ????? ###
 def add_vote(id, add, answers_data_base):
     for dict in answers_data_base:
         if dict['id'] == id:
@@ -16,70 +20,102 @@ def add_vote(id, add, answers_data_base):
     return answers_data_base
 
 
-def get_question_by_id_number(question_id):
-    database_path=connection.get_path("sample_data/question.csv")
-    database = connection.read_file(database_path)
-    is_question_exist = False
-    for row in database:
-        if row['id'] == question_id:
-            is_question_exist = True
-            return row
-    if not is_question_exist:
-        raise Exception('There is no question found with id {} in database'.format(question_id))
+@database_common.connection_handler
+def get_question_by_id_number(cursor, question_id):
+    cursor.execute("""
+                    SELECT submission_time, view_number, vote_number, title, message, image 
+                    FROM question
+                    WHERE id = %(id)s ORDER BY title;
+                   """,
+                   {'id': question_id})
+    question = cursor.fetchall()
+    return question
 
 
-def get_answer_by_question_id(question_id):
-    database_path=connection.get_path("sample_data/answer.csv")
-    database = connection.read_file(database_path)
-    answers_list = []
-    for row in database:
-        if row['question_id'] == question_id:
-            answers_list.append(row)
-    if answers_list is None:
-        raise Exception('There is no answer found with question id {} in database'.format(question_id))
-    else:
-        return answers_list
+@database_common.connection_handler
+def get_answer_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT submission_time, vote_number, message, title, message, image
+                    FROM answer
+                    WHERE question_id = %(id)s ORDER BY vote_number;
+                   """,
+                   {'id': question_id})
+    answers = cursor.fetchall()
+    return answers
 
 
-def ask_question_answer(question, database_path):
-    database = connection.read_file(database_path)
-    database.append(question)
-    connection.save_file(database, database_path)
+@database_common.connection_handler
+def ask_question_answer(cursor, new_answer_data):
+    new_answer_id = max_id('answer') + 1
+    cursor.execute("""
+                    INSERT INTO answer
+                    VALUES(%(id)s, %(sub_time)s, %(vote)s, %(q_id)s, %(message)s, %(image)s);
+                    """,
+                    {'id': new_answer_id, 
+                    'sub_time': new_answer_data['submission_time'], 
+                    'vote': new_answer_data['vote_number'], 
+                    'q_id': new_answer_data['question_id'], 
+                    'message': new_answer_data['message'], 
+                    'image': new_answer_data['image']})
 
 
-def ask_question(question):
-    database_path=connection.get_path("sample_data/question.csv")
-    database = connection.read_file(database_path)
-    database.append(question)
-    file_name = "sample_data/question.csv"
-    connection.save_file(database, file_name)
+@database_common.connection_handler
+def max_id(cursor, database_name):
+    cursor.execute("""SELECT MAX(id) FROM %(db)s;""",
+                    {'db': database_name})
+    max_id = cursor.fetchall()
+    return max_id
 
 
-def sort_data(data, order_by, order_direction):
-    if order_direction == "Ascending":
-        reverse_for_sort = False
+@database_common.connection_handler
+def ask_question(cursor, new_question_data):
+    new_question_id = max_id('question') + 1
+    cursor.execute("""
+                    INSERT INTO question
+                    VALUES(%(id)s, %(sub_time)s, %(view)s, %(vote)s, %(title)s, %(message)s, %(image)s);
+                    """,
+                    {'id': new_question_id, 
+                    'sub_time': new_question_data['submission_time'], 
+                    'view': new_question_data['view_number'], 
+                    'vote': new_question_data['vote_number'], 
+                    'title': new_question_data['title'], 
+                    'message': new_question_data['message'], 
+                    'image': new_question_data['image']})
+
+
+@database_common.connection_handler
+def sort_data(cursor, database_name, order_by, order_direction):
+    if order_direction == "Ascending" or None:
+        order = 'ASC'
     elif order_direction == "Descending":
-        reverse_for_sort = True
-    elif order_direction == None:
-        reverse_for_sort = False
-
-    if order_by == "Number of Votes":
-        data.sort(key=lambda x: int(x["vote_number"]), reverse=reverse_for_sort)
-    elif order_by == "Chronology" or order_by == 'Submission time':
-        data.sort(key=lambda x: datetime.strptime(x['submission_time'], '%Y-%m-%d %H:%M'), reverse=reverse_for_sort)
+        order = 'DESC'
+    
+    if order_by == "Number of Votes" or None:
+        category = "vote_number"
+    elif order_by == "Chronology" or 'Submission time':
+        category = 'submission_time'
     elif order_by == "Answer length":
-        data.sort(key=lambda x: len(x["message"]), reverse=reverse_for_sort)
+        category = "message"
     elif order_by == 'Title':
-        data.sort(key=lambda x: x["title"], reverse=reverse_for_sort)
+        category = "title"
     elif order_by == 'Message':
-        data.sort(key=lambda x: x["message"], reverse=reverse_for_sort)
+        category = "message"
     elif order_by == 'Number of Views':
-        data.sort(key=lambda x: x["view_number"], reverse=reverse_for_sort)
-    elif order_by == None:
-        data.sort(key=lambda x: int(x["vote_number"]), reverse=True)
-    return data
+        category = "view_number"
+    
+    cursor.execute("""
+    DROP TABLE IF EXISTS temp_db;
+    SELECT * INTO temp_db FROM %(db)s;
+    ALTER TABLE temp_db DROP COLUMN id
+    ALTER TABLE temp_db DROP COLUMN image;
+    ORDER BY %(category)s %(order)s;
+    """,
+        {'db': database_name, 'category': category, 'order': order})
+    sorted_data = cursor.fetchall()
+    return sorted_data
 
 
+### ????? util ??? ###
 def convert_time(data):
     for i in data:
         ts = float(i["submission_time"])
@@ -87,41 +123,43 @@ def convert_time(data):
     return data
 
 
-def update_question(edited_question: dict):
-    new_database = []
-    database = connection.read_file('sample_data/question.csv')
-    for question in database:
-        if question["id"] == edited_question["id"]:
-            for key, value in edited_question.items():
-                question[key] = value
-        new_database.append(question)
-    connection.save_file(new_database, 'sample_data/question.csv')
+@database_common.connection_handler
+def update_question(cursor, edited_question: dict):
+    cursor.execute("""
+    UPDATE question 
+    SET submission_time = %(sub_time)s
+    SET view_number = %(view)s
+    SET vote_number = %(vote)s
+    SET title = %(title)s
+    SET message = %(message)s
+    SET image = %(image)s
+    WHERE id = %(id)s;
+    """,
+        {'id': edited_question['id'], 'sub_time': edited_question['submission_time'], 
+        'view': edited_question['view_number'],'vote': edited_question['vote_number'], 
+        'title': edited_question['title'], 'message': edited_question['message'], 'image': edited_question['image']})
 
 
-def delete_question(question: dict):
-    database = connection.read_file('sample_data/question.csv')
-    database.remove(question)
-    connection.save_file(database, 'sample_data/question.csv')
+@database_common.connection_handler
+def delete_question(cursor, question: dict):
+    cursor.execute("""
+    DELETE FROM question WHERE id = %(id)s;
+    """,
+        {'id': question['id']})
     delete_answers_by_question_id(question)
 
 
-def delete_answers_by_question_id(question: dict):
-    answers = connection.read_file('sample_data/answer.csv')
-    to_delete = []
-    for index in range(len(answers)):
-        if answers[index]['question_id'] == question['id']:
-            to_delete.append(answers[index])
-    for item in to_delete:
-        answers.remove(item)
-    connection.save_file(answers, 'sample_data/answer.csv')
+@database_common.connection_handler
+def delete_answers_by_question_id(cursor, question: dict):
+    cursor.execute("""
+    DELETE FROM answer WHERE question_id = %(q_id)s;
+    """,
+        {'q_id': question['id']})
 
 
-def delete_answer(question_id, answer_id):
-    database = connection.read_file('sample_data/answer.csv')
-    to_delete = []
-    for answer in database:
-        if answer['question_id'] == question_id and answer['id'] == answer_id:
-            to_delete.append(answer)
-    for item in to_delete:
-        database.remove(item)
-        connection.save_file(database, 'sample_data/answer.csv')
+@database_common.connection_handler
+def delete_answer(cursor, question_id, answer_id):
+    cursor.execute("""
+    DELETE FROM answer WHERE question_id = %(q_id)s AND id = %(a_id)s;
+    """,
+        {'q_id': question_id, 'a_id': answer_id})

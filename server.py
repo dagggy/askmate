@@ -20,7 +20,7 @@ def main_page():
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
-        data_manager.sort_data(data, category, order)
+        data_manager.sort_data('question', category, order)
 
     return render_template('list_questions.html', data=data, headers=headers)
 
@@ -42,7 +42,7 @@ def display_question_with_answers(question_id):
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
-        data_manager.sort_data(answers_data_base, category, order)
+        data_manager.sort_data('answer', category, order)
     if request.method == 'POST':
         if request.form.get('vote_answer'):
             id = request.form['vote_answer']
@@ -69,7 +69,7 @@ def add_answer(question_id):
         if file and util.allowed_file(file.filename):
             file.save(UPLOAD_FOLDER / file.filename)
         answer = util.get_answer(description, file.filename, question_id)
-        data_manager.ask_question_answer(answer, connection.get_path('sample_data//answer.csv'))     
+        data_manager.ask_question_answer(answer)     
         return redirect(f'/question/{question_id}')
 
     elif request.method == 'GET':
