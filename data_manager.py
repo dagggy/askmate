@@ -4,8 +4,8 @@ Functions here are called from server.py
 and use generic functions from connection.py.
 '''
 from datetime import datetime
-import connection
 import time
+import database_common
 
 
 def add_vote(id, add, answers_data_base):
