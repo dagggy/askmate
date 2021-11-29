@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ask Mate</title>
+</head>
+<body>
+      <table>
+        <tr>
+            <th>
+                <a href="/"><h1>Ask Mate</h1></a>
+            </th>
+            <th>
+                <h2> - crowdsourced Q&A site</h2>
+            </th>
+        </tr>
+    </table>
+    <marquee direction="left"  WIDTH=100% style="border:RED 3px SOLID" >
+    Here you can ask anything and get an answer very quickly.  You can also vote for your favorite questions or answers.  Good luck :)
+    </marquee>
+    <p></p>
+    <table cellpadding="10">
+        <tr>
+            <td>
+    <table>
+        <tr>
+            <td>Sort by </td>
+            <td>
+                <form method="GET">
+                <select name="by_category" id="category">
+                    <option id="title">Title</option>
+                    <option id="submission_time">Submission time</option>
+                    <option id="message">Message</option>
+                    <option id="view_number">Number of Views</option>
+                    <option id="vote_number">Number of Votes</option>
+                </select>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+                <select name="by_order" id="order">
+                    <option id="asc">Ascending</option>
+                    <option id="dsc">Descending</option>
+                </select>
+                <button type="submit"><strong>Sort</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+            </td>
+            <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    <td>
+      <form action="/add_question">
+        <button><strong>Add question</strong></button>
+      </form>
+    </td>
+        </tr>
+    </table>
+    <table>
+        <form method="POST">
+        <tr style="background-color: blanchedalmond">
+            {% for i in headers %}
+                <th>{{ i }}</th>
+            {% endfor %}
+        </tr>
+        </form>
+        {% for dict in data %}
+           <tr style="background-color: beige">
+                {% for key, value in dict.items() %}
+                    {% if key == "title" %}
+                        <td style="background-color: beige">
+                            <a href="/question/{{ dict["id"] }}">{{ value }}</a>
+                        </td>
+                    {% elif key == "submission_time" %}
+                        <td style="background-color: beige"> {{ value }} </td>
+                    {% elif key == "message" %}
+                        <td style="background-color: beige"> {{ value }} </td>
+                    {% elif key == "view_number" %}
+                        <td style="background-color: beige"> {{ value }} </td>
+                     {% elif key == "vote_number" %}
+                        <td style="background-color: beige"> {{ value }} </td>
+                    {% endif %}
+                {% endfor %}
+           </tr>
+           {% endfor %}
+    </table>
+</body>
+</html>

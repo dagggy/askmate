@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>AskMate | Question</title>
+        <style>
+            .image{
+                width:100%;
+                max-width:600px;
+            }
+        </style>
+    </head>
+    <body>
+      <table>
+        <tr>
+            <th>
+                <a href="/"><h1>Ask Mate</h1></a>
+            </th>
+            <th>
+                <h2> - crowdsourced Q&A site</h2>
+            </th>
+        </tr>
+    </table>
+        <h1>{{ question['title'] }}</h1>
+        <table>    
+            <tr>
+                <td>
+                    <p>{{ submission_time }}</p>
+                    Question: #{{ question['id'] }} &nbsp;
+                    Number of view: {{ question['view_number'] }} &nbsp;
+                    Number of vote: {{ question['vote_number'] }}
+                </td>
+            </tr>
+             <td>
+                    <td>Evaluate this question:</td>
+               <td><form method="POST">
+                    <button href="/question/{{ question['id'] }}" type="submit" value="{{ question['id'] }}" name="vote_question">Vote Up!</button>
+                    <input type="hidden" id="up" name="vote" value="1">
+                </form></td>
+                <td><form method="POST">
+                    <button href="/question/{{ question['id'] }}" type="submit"  value="{{ question['id'] }}" name="vote_question">Vote Down!</button>
+                    <input type="hidden" id="down" name="vote" value="-1">
+                </form></td>
+
+                </td>
+            <tr>
+                <td><fieldset><strong>{{ question['message'] }}</strong></fieldset></td>
+                <p>
+                    {% if image != '' %}
+                        <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
+                    {% endif %}
+            </tr>
+            <tr><a href="/question/{{ question['id'] }}/edit_page"> <input type="button" value="Edit Question"> </a></tr>
+        </table>
+
+        <div>
+            <form action="/question/{{ question['id'] }}" method="POST">
+                 <p>
+                     If you want to add an answer, please, press the button:
+                     <a href="/question/{{ question['id'] }}/new-answer">
+                         <input type="button" value="Add answer">
+                     </a>
+                 </p>
+            </form>
+            <form action="/question/{{ question['id'] }}/delete" method="POST">
+                To delete the question, press here!
+                <input type='submit' value='Delete'>
+            </form>
+            <form method="GET">
+                <table>
+                    <tr>
+                        <td>Sort by </td>
+                        <td>
+                            <select name="by_category" id="category">
+                                <option id="vote_number">Number of Votes</option>
+                                <option id="answer_length">Answer length</option>
+                                <option id="chronology">Chronology</option>
+                            </select>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <select name="by_order" id="order">
+                                <option id="asc">Ascending</option>
+                                <option id="dsc">Descending</option>
+                            </select>
+                        </td>
+                        <td><input type="submit" value="Submit"></td>
+                    </tr>
+                </table>
+                    </form>
+                <p></p>
+                
+                {% for answer in answers_base %}
+                <form method="POST">
+                 <fieldset>
+                     <legend> Answer #{{ answer['id'] }}_______{{ answer['submission_time'] }} </legend>
+                     <p>{{ answer['message'] }}</p>
+                     <p>{{ answer['vote_number'] }}
+                     <form method="POST">
+                        <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}" name="vote_answer">Vote Up!</button>
+                        <input type="hidden" id="up" name="vote" value="1">
+                     </form>
+                     <form method="POST">
+                         <button href="/question/{{ question['id'] }}" type="submit"  value="{{ answer['id'] }}" name="vote_answer">Vote Down!</button>
+                        <input type="hidden" id="down" name="vote" value="-1">
+                     </form>
+                     </p>
+                </form>
+                <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="POST"><input type='submit' value='Delete this answer'></form>
+                </fieldset>
+                {% endfor %}
+
+        </div>
+    </body>
+</html>

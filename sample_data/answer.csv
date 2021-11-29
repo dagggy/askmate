@@ -1,0 +1,79 @@
+id,submission_time,vote_number,question_id,message,image
+1,1493398140.0,8,1,You need to use brackets: my_list = [],
+2,1493088120.0,35,1,Look it up in the Python docs,
+3,1637223960.0,0,1,"To define lists in Python there are two ways. The first is to add your items between two square brackets.
+
+Example:
+
+items = [1, 2, 3, 4]
+The 2nd method is to call the Python list built-in function by passing the items to it.
+
+Example:
+
+Items  = list(1, 2,3,4)
+In both cases, the output will be
+
+[1, 2, 3, 4]
+The list can accept any data type. You can have a list of integers and strings. List in python doesn't enforce to have a single item type in it. You can have a list of different items.
+
+[1, 'name', {""key"" : ""value""}, list(1, 2, 3)]
+This gives you the flexibility to add multiple data types in the list. You can add a list inside this list. This is called a nested list. Now we store our data into a python list it's time to know how to do more with these data.",Screenshot 2021-11-18 at 09.25.27.png
+1,1637224140.0,4,3,"Check out this post regarding the Cordova Whitelist Plugin, it has solved most of my issues.
+I don't know whether or not you are using any WKWebView plugins, but the cordova-wkwebview-engine plugin supports some iOS specific Application Transport Security settings as well https://github.com/apache/cordova-plugin-wkwebview-engine.
+
+Another workaround would be to use an HTML input tag to initiate the camera capture:
+
+<input type=""file"" capture=""camera"" accept=""image/*"" />
+And just listen to the ""change"" event.",
+1,1637224440.0,6,6,"list1 = [""hey""]
+
+list2 = [""yo""]
+
+list1.append(list2) = [""hey"", [""yo""]]
+list1.extend(list2) = [""hey"", ""yo""]
+list1 = list + list2 = [""hey"", ""yo""]",Screenshot 2021-11-18 at 09.33.56.png
+2,1637224500.0,5,6,"0
+
+You should avoid using list as a variable name, it's a reserved word for python lists.
+
+I think this is what you want:
+
+list_ = []
+f_list = []
+
+item = [1,2,3,4,5]
+
+for i in item:
+    list_.append(i)
+    f_list.extend(list_)
+    print(list_)
+print(""Final list - "", f_list)
+Output:
+
+[1]
+[1, 2]
+[1, 2, 3]
+[1, 2, 3, 4]
+[1, 2, 3, 4, 5]
+Final list -  [1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5]",Screenshot 2021-11-18 at 09.35.15.png
+4,1637226060.0,17,5,"It's boilerplate code that protects users from accidentally invoking the script when they didn't intend to. Here are some common problems when the guard is omitted from a script:
+
+If you import the guardless script in another script (e.g. import my_script_without_a_name_eq_main_guard), then the second script will trigger the first to run at import time and using the second script's command line arguments. This is almost always a mistake.
+If you have a custom class in the guardless script and save it to a pickle file, then unpickling it in another script will trigger an import of the guardless script, with the same problems outlined in the previous bullet.
+",
+5,1637226060.0,7,5,"Short Answer
+
+It's boilerplate code that protects users from accidentally invoking the script when they didn't intend to. Here are some common problems when the guard is omitted from a script:
+
+If you import the guardless script in another script (e.g. import my_script_without_a_name_eq_main_guard), then the second script will trigger the first to run at import time and using the second script's command line arguments. This is almost always a mistake.
+If you have a custom class in the guardless script and save it to a pickle file, then unpickling it in another script will trigger an import of the guardless script, with the same problems outlined in the previous bullet.
+Long Answer
+
+To better understand why and how this matters, we need to take a step back to understand how Python initializes scripts and how this interacts with its module import mechanism.
+
+Whenever the Python interpreter reads a source file, it does two things:
+
+it sets a few special variables like __name__, and then
+it executes all of the code found in the file.
+Let's see how this works and how it relates to your question about the __name__ checks we always see in Python scripts.
+",
