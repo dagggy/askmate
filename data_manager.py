@@ -11,10 +11,8 @@ def sort_data_bd(cursor, database_name, order_by, order_direction):
 
     if order_by == "Number of Votes" or order_by == None:
         category = "vote_number"
-    elif order_by == "Chronology" or order_by == 'Submission time':
+    elif order_by == "Chronology":
         category = 'submission_time'
-    elif order_by == "Answer length":
-        category = "message"
     elif order_by == 'Title':
         category = "title"
     elif order_by == 'Message':
@@ -23,16 +21,10 @@ def sort_data_bd(cursor, database_name, order_by, order_direction):
         category = "view_number"
 
     cursor.execute(f"""
-        DROP TABLE IF EXISTS temp_db;
-        SELECT * INTO temp_db FROM question;
-        ALTER TABLE temp_db DROP COLUMN image;
-        ALTER TABLE temp_db DROP COLUMN id;
-        SELECT * FROM temp_db
+        SELECT * FROM {database_name}
         ORDER BY {category} {order};
     """)
-    sorted_data = cursor.fetchall()
-    return sorted_data
-
+    return cursor.fetchall()
 
 @database_common.connection_handler
 def get_question_bd(cursor):

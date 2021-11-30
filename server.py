@@ -19,7 +19,7 @@ def main_page():
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
-        data_manager.sort_data_bd('question', category, order)
+        data = data_manager.sort_data_bd('question', category, order)
     return render_template('list_questions.html', data=data, headers=headers)
 
 
