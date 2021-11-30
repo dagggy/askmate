@@ -46,7 +46,7 @@
             <tr>
                 <td><fieldset><strong>{{ question['message'] }}</strong></fieldset></td>
                 <p>
-                    {% if image != '' %}
+                    {% if image != None %}
                         <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
                     {% endif %}
             </tr>
@@ -110,6 +110,9 @@
                  <fieldset>
                      <legend> Answer #{{ answer['id'] }}_______{{ answer['submission_time'] }} </legend>
                      <p>{{ answer['message'] }}</p>
+                     {% if image != None %}
+                        <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
+                     {% endif %}
                      <p>{{ answer['vote_number'] }}
                      <form method="POST">
                         <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}" name="vote_answer">Vote Up!</button>
