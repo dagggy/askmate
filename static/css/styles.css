@@ -2,6 +2,16 @@
   box-sizing: border-box;
 }
 
+img.btn {
+  opacity: 0.6;
+  border-bottom: 4px solid white;
+  cursor: pointer;
+}
+img.btn:hover {
+  opacity: 1;
+  border-bottom: 4px solid #DDDDFF;
+}
+
 /* Style the search field */
 form.search input[type=text] {
   padding: 10px;

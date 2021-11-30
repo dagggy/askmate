@@ -50,6 +50,23 @@ def get_question_by_id_bd(cursor, question_id):
         """)
     return cursor.fetchall()
 
+@database_common.connection_handler
+def get_answer_by_id_bd(cursor, answer_id):
+    cursor.execute(f"""
+        SELECT *
+        FROM answer
+        WHERE id = '{answer_id}' LIMIT 1
+        """)
+    return cursor.fetchall()[0]
+
+@database_common.connection_handler
+def update_answer_by_id_bd(cursor, answer_id, answer):
+    cursor.execute(f"""
+                        UPDATE answer
+                        SET message = '{answer}'
+                        WHERE id = '{answer_id}';
+                        """)
+
 
 @database_common.connection_handler
 def update_question_by_id_bd(cursor, question_id):

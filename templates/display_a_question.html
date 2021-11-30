@@ -9,6 +9,7 @@
                 max-width:600px;
             }
         </style>
+        <link rel="stylesheet" href="../static/css/styles.css">
     </head>
     <body>
       <table>
@@ -135,8 +136,9 @@
                 </form>
                 <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
                     <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">
-                        <img src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
+                        <img class="btn" title="Delete this answer" src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
                     </button>
+                    <a href="/answer/{{ answer['id'] }}/edit"><img title="Edit this answer" class="btn" src="../static/icons/edit.png" alt="submit" style="width:40px;height:40px;"></a>
                 </form>
                 </fieldset>
                 {% endfor %}

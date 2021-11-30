@@ -76,6 +76,21 @@ def add_answer(question_id):
     elif request.method == 'GET':
         return render_template('upload_answer.html', question_id=question['id'])
 
+@app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
+def edit_answer(answer_id):
+    if request.method == 'POST':
+        new_message = request.form['description']
+        #file = request.files['file']
+        #if file and util.allowed_file(file.filename):
+        #    file.save(UPLOAD_FOLDER / file.filename)
+        data_manager.update_answer_by_id_bd(answer_id, new_message)
+        answer_data = data_manager.get_answer_by_id_bd(answer_id)
+        return redirect(f'/question/{answer_data["question_id"]}')
+    if request.method == 'GET':
+        edited_answer = data_manager.get_answer_by_id_bd(answer_id)
+        edited_answer['submission_time'] = edited_answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+        return render_template('edit_answer.html', answer=edited_answer)
+
 
 @app.route('/add_question', methods=['POST', 'GET'])
 def new_question():
