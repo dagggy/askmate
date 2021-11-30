@@ -6,38 +6,9 @@ import psycopg2
 import psycopg2.extras
 
 
-def read_dot_env():
-    enviroment_variables = []
-    with open('.env','r') as env:
-        lines = env.readlines()
-
-    for line in lines:
-        env_key, env_value = tuple(line.strip('\n').split(' = '))
-        pair = env_key, env_value
-        enviroment_variables.append(pair)
-
-    dict_env = {k:v for k, v in enviroment_variables}
-    return dict_env
-
-
-def get_secret_env_value(key):
-    dict_env = read_dot_env()
-    value = dict_env[key]
-    return value
-
-
-def set_enviroment_variables():
-    os.environ["PSQL_USER_NAME"] = get_secret_env_value("PSQL_USER_NAME")
-    os.environ["PSQL_PASSWORD"] = get_secret_env_value("PSQL_PASSWORD")
-    os.environ["PSQL_HOST"] = get_secret_env_value("PSQL_HOST")
-    os.environ["PSQL_DB_NAME"] = get_secret_env_value("PSQL_DB_NAME")
-
-
 def get_connection_string():
-    set_enviroment_variables()
     # setup connection string
     # to do this, please define these environment variables first
-    
     user_name = os.environ.get('PSQL_USER_NAME')
     password = os.environ.get('PSQL_PASSWORD')
     host = os.environ.get('PSQL_HOST')

@@ -25,7 +25,7 @@
         <table>    
             <tr>
                 <td>
-                    <p>{{ submission_time }}</p>
+                    <p>{{ question['submission_time'] }}</p>
                     Question: #{{ question['id'] }} &nbsp;
                     Number of view: {{ question['view_number'] }} &nbsp;
                     Number of vote: {{ question['vote_number'] }}
@@ -52,6 +52,21 @@
             </tr>
             <tr><a href="/question/{{ question['id'] }}/edit_page"> <input type="button" value="Edit Question"> </a></tr>
         </table>
+        <form action="/question/{{ question['id'] }}/new_comment" method="POST">
+                 <p>
+                     Press the button to add a comment:
+                     <a href="/question/{{ question['id'] }}/new_comment">
+                         <input type="button" value="Add comment">
+                     </a>
+                 </p>
+            </form>
+        <h5>Comments to question:</h5>
+        {% for comment in comments %}
+            <fieldset>
+            <legend> {{ comment['submission_time'] }} </legend>
+            {{ comment['message'] }}
+            </fieldset>
+        {% endfor %}
 
         <div>
             <form action="/question/{{ question['id'] }}" method="POST">
@@ -107,7 +122,11 @@
                      </form>
                      </p>
                 </form>
-                <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="POST"><input type='submit' value='Delete this answer'></form>
+                <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
+                    <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">
+                        <img src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
+                    </button>
+                </form>
                 </fieldset>
                 {% endfor %}
 
