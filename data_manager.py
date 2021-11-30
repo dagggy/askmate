@@ -4,55 +4,7 @@ Functions here are called from server.py
 and use generic functions from connection.py.
 '''
 from datetime import datetime
-import connection
-import time
-
-
-def add_vote(id, add, answers_data_base):
-    for dict in answers_data_base:
-        if dict['id'] == id:
-            dict['vote_number'] = str(int(dict['vote_number']) + add)
-        dict['submission_time'] = str(time.mktime(datetime.strptime(dict['submission_time'], "%Y-%m-%d %H:%M").timetuple()))
-    return answers_data_base
-
-
-def get_question_by_id_number(question_id):
-    database_path=connection.get_path("sample_data/question.csv")
-    database = connection.read_file(database_path)
-    is_question_exist = False
-    for row in database:
-        if row['id'] == question_id:
-            is_question_exist = True
-            return row
-    if not is_question_exist:
-        raise Exception('There is no question found with id {} in database'.format(question_id))
-
-
-def get_answer_by_question_id(question_id):
-    database_path=connection.get_path("sample_data/answer.csv")
-    database = connection.read_file(database_path)
-    answers_list = []
-    for row in database:
-        if row['question_id'] == question_id:
-            answers_list.append(row)
-    if answers_list is None:
-        raise Exception('There is no answer found with question id {} in database'.format(question_id))
-    else:
-        return answers_list
-
-
-def ask_question_answer(question, database_path):
-    database = connection.read_file(database_path)
-    database.append(question)
-    connection.save_file(database, database_path)
-
-
-def ask_question(question):
-    database_path=connection.get_path("sample_data/question.csv")
-    database = connection.read_file(database_path)
-    database.append(question)
-    file_name = "sample_data/question.csv"
-    connection.save_file(database, file_name)
+import database_common
 
 
 def sort_data(data, order_by, order_direction):
@@ -80,48 +32,115 @@ def sort_data(data, order_by, order_direction):
     return data
 
 
-def convert_time(data):
-    for i in data:
-        ts = float(i["submission_time"])
-        i["submission_time"] = time.strftime('%Y-%m-%d %H:%M', time.localtime(ts))
-    return data
+@database_common.connection_handler
+def get_question_bd(cursor):
+    cursor.execute("""
+        SELECT *
+        FROM question
+        """)
+    return cursor.fetchall()
 
 
-def update_question(edited_question: dict):
-    new_database = []
-    database = connection.read_file('sample_data/question.csv')
-    for question in database:
-        if question["id"] == edited_question["id"]:
-            for key, value in edited_question.items():
-                question[key] = value
-        new_database.append(question)
-    connection.save_file(new_database, 'sample_data/question.csv')
+@database_common.connection_handler
+def get_question_by_id_bd(cursor, question_id):
+    cursor.execute(f"""
+        SELECT *
+        FROM question
+        WHERE id = '{question_id}'
+        """)
+    return cursor.fetchall()
 
 
-def delete_question(question: dict):
-    database = connection.read_file('sample_data/question.csv')
-    database.remove(question)
-    connection.save_file(database, 'sample_data/question.csv')
-    delete_answers_by_question_id(question)
+@database_common.connection_handler
+def update_question_by_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                        UPDATE question
+                        SET view_number = view_number + 1
+                        WHERE id = '{question_id}';
+                        """)
 
 
-def delete_answers_by_question_id(question: dict):
-    answers = connection.read_file('sample_data/answer.csv')
-    to_delete = []
-    for index in range(len(answers)):
-        if answers[index]['question_id'] == question['id']:
-            to_delete.append(answers[index])
-    for item in to_delete:
-        answers.remove(item)
-    connection.save_file(answers, 'sample_data/answer.csv')
+@database_common.connection_handler
+def update_answer_by_vote_bd(cursor, id, add):
+    cursor.execute(f"""
+                        UPDATE answer
+                        SET vote_number = vote_number + {add}
+                        WHERE id = '{id}';
+                        """)
 
 
-def delete_answer(question_id, answer_id):
-    database = connection.read_file('sample_data/answer.csv')
-    to_delete = []
-    for answer in database:
-        if answer['question_id'] == question_id and answer['id'] == answer_id:
-            to_delete.append(answer)
-    for item in to_delete:
-        database.remove(item)
-        connection.save_file(database, 'sample_data/answer.csv')
+@database_common.connection_handler
+def update_question_by_vote_bd(cursor, id, add):
+    cursor.execute(f"""
+                        UPDATE question
+                        SET vote_number = vote_number + {add}
+                        WHERE id = '{id}';
+                        """)
+
+
+@database_common.connection_handler
+def get_answer_by_question_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                            SELECT  id, submission_time, vote_number, question_id, message, image
+                            FROM answer
+                            WHERE question_id = '{question_id}'
+                            """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def max_id_answer_bd(cursor):
+    cursor.execute("""SELECT MAX(id) FROM answer""")
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def adding_new_answer_bd(cursor, question_id, message, image):
+    current_id = max_id_answer_bd()[0]['max'] + 1
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO answer
+                    VALUES('{current_id}', '{current_time}', '0', '{question_id}', '{message}', '{image}');
+                    """)
+
+
+@database_common.connection_handler
+def max_id_question_bd(cursor):
+    cursor.execute("""SELECT MAX(id) FROM question""")
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def adding_new_applicant_bd(cursor, title, message, image):
+    current_id = max_id_question_bd()[0]['max'] + 1
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO question
+                    VALUES('{current_id}', '{current_time}', '0', '0', '{title}', '{message}', '{image}');
+                    """)
+
+
+@database_common.connection_handler
+def delete_question_by_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                        DELETE FROM question 
+                        WHERE id = '{question_id}'
+                        """)
+
+
+@database_common.connection_handler
+def update_question_by_id_bd(cursor, id, title, message, image):
+    current_time = datetime.now()
+    cursor.execute(f"""
+                        UPDATE question
+                        SET vote_number = '0', view_number = '0', title = '{title}', message = '{message}', submission_time = '{current_time}', image = '{image}'
+                        WHERE id = '{id}';
+                        """)
+
+
+@database_common.connection_handler
+def delete_answer_by_id_bd(cursor, question_id, answer_id):
+    cursor.execute(f"""
+                        DELETE FROM answer 
+                        WHERE id = '{answer_id}' and question_id = '{question_id}'
+                        """)
