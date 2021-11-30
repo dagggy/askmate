@@ -94,8 +94,15 @@ def delete_question(question_id):
 @app.route('/question/<question_id>/<answer_id>/delete', methods=['GET', 'POST'])
 def delete_answer(question_id, answer_id):
     if request.method == 'POST':
-        data_manager.delete_answer_by_id_bd(question_id, answer_id)
-        return render_template('delete_answer.html')
+        value = list(request.form)
+        print(value)
+        if value == ['yes']:
+            data_manager.delete_answer_by_id_bd(question_id, answer_id)
+            return redirect(f'/question/{question_id}')
+        else:
+            return redirect(f'/question/{question_id}')
+    elif request.method == 'GET':
+        return render_template('confirm_answer_deletion.html')
 
 
 @app.route('/question/<question_id>/edit_page', methods=['GET', 'POST'])

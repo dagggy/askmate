@@ -122,7 +122,11 @@
                      </form>
                      </p>
                 </form>
-                <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="POST"><input type='submit' value='Delete this answer'></form>
+                <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
+                    <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">
+                        <img src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
+                    </button>
+                </form>
                 </fieldset>
                 {% endfor %}
 
