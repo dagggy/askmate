@@ -15,7 +15,7 @@ def main_page():
     data = data_manager.get_question_bd()
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    headers = ['submission time', 'number of views', 'number of votes', 'title', 'message']
+    headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
