@@ -170,3 +170,13 @@ def get_comment_by_question_id_bd(cursor, question_id):
                             WHERE question_id = '{question_id}'
                             """)
     return cursor.fetchall()
+
+@database_common.connection_handler
+def search_by_phrase(cursor,phrase):
+    cursor.execute(f"""
+                    SELECT * 
+                    FROM question
+                    WHERE title LIKE '%{phrase}%'
+                        OR message LIKE '%{phrase}%';
+                    """)
+    return cursor.fetchall()
