@@ -31,18 +31,6 @@
                     Number of vote: {{ question['vote_number'] }}
                 </td>
             </tr>
-             <td>
-                    <td>Evaluate this question:</td>
-               <td><form method="POST">
-                    <button href="/question/{{ question['id'] }}" type="submit" value="{{ question['id'] }}" name="vote_question">Vote Up!</button>
-                    <input type="hidden" id="up" name="vote" value="1">
-                </form></td>
-                <td><form method="POST">
-                    <button href="/question/{{ question['id'] }}" type="submit"  value="{{ question['id'] }}" name="vote_question">Vote Down!</button>
-                    <input type="hidden" id="down" name="vote" value="-1">
-                </form></td>
-
-                </td>
             <tr>
                 <td><fieldset><strong>{{ question['message'] }}</strong></fieldset></td>
                 <p>
@@ -50,6 +38,20 @@
                         <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
                     {% endif %}
             </tr>
+        </table>
+        <table>
+            <tr>
+                <td>Evaluate this question:</td>
+                <td><form method="POST">
+                    <button href="/question/{{ question['id'] }}" type="submit" value="{{ question['id'] }}" name="vote_question">Vote Up!</button>
+                    <input type="hidden" id="up" name="vote" value="1">
+                </form></td>
+                <td><form method="POST">
+                    <button href="/question/{{ question['id'] }}" type="submit"  value="{{ question['id'] }}" name="vote_question">Vote Down!</button>
+                    <input type="hidden" id="down" name="vote" value="-1">
+                </form></td>
+            </tr>
+
             <tr><a href="/question/{{ question['id'] }}/edit_page"> <input type="button" value="Edit Question"> </a></tr>
         </table>
         <form action="/question/{{ question['id'] }}/new_comment" method="POST">
@@ -113,16 +115,23 @@
                      {% if image != None %}
                         <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
                      {% endif %}
-                     <p>{{ answer['vote_number'] }}
-                     <form method="POST">
-                        <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}" name="vote_answer">Vote Up!</button>
-                        <input type="hidden" id="up" name="vote" value="1">
-                     </form>
-                     <form method="POST">
-                         <button href="/question/{{ question['id'] }}" type="submit"  value="{{ answer['id'] }}" name="vote_answer">Vote Down!</button>
-                        <input type="hidden" id="down" name="vote" value="-1">
-                     </form>
-                     </p>
+                     <table>
+                         <td>
+                              <form method="POST">
+                                <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}" name="vote_answer">Vote Up!</button>
+                                <input type="hidden" id="up" name="vote" value="1">
+                              </form>
+                         </td>
+                        <td>
+                            <p>{{ answer['vote_number'] }}</p>
+                        </td>
+                         <td>
+                             <form method="POST">
+                                 <button href="/question/{{ question['id'] }}" type="submit"  value="{{ answer['id'] }}" name="vote_answer">Vote Down!</button>
+                                 <input type="hidden" id="down" name="vote" value="-1">
+                             </form>
+                         </td>
+                     </table>
                 </form>
                 <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
                     <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">

@@ -27,19 +27,6 @@ def main_page():
 def display_question_with_answers(question_id):
     data_manager.get_question_by_id_bd(question_id)
     answers_data_base = data_manager.get_answer_by_question_id_bd(question_id)
-    if request.method == 'GET':
-        category = request.args.get('by_category')
-        order = request.args.get('by_order')
-        answers_data_base = data_manager.sort_data_bd('answer', category, order)
-    if request.method == 'POST':
-        if request.form.get('vote_answer'):
-            id = request.form['vote_answer']
-            add = int(request.form['vote'])
-            data_manager.update_answer_by_vote_bd(id, add)
-        if request.form.get('vote_question'):
-            id = request.form['vote_question']
-            add = int(request.form['vote'])
-            data_manager.update_question_by_vote_bd(id, add)
     question = data_manager.get_question_by_id_bd(question_id)[0]
     question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     try:
@@ -51,6 +38,24 @@ def display_question_with_answers(question_id):
     comments = data_manager.get_comment_by_question_id_bd(question_id)
     for comment in comments:
         comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+
+    if request.method == 'POST':
+        if request.form.get('vote_answer'):
+            id = request.form['vote_answer']
+            add = int(request.form['vote'])
+            data_manager.update_answer_by_vote_bd(id, add)
+
+        if request.form.get('vote_question'):
+            id = request.form['vote_question']
+            add = int(request.form['vote'])
+            data_manager.update_question_by_vote_bd(id, add)
+
+        answers_data_base = data_manager.get_answer_by_question_id_bd(question_id)
+
+    if request.method == 'GET':
+        category = request.args.get('by_category')
+        order = request.args.get('by_order')
+        answers_data_base = data_manager.sort_data_bd('answer', category, order, question_id)
     return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base, comments=comments)
 
 

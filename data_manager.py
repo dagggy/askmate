@@ -3,10 +3,15 @@ import database_common
 
 
 @database_common.connection_handler
-def sort_data_bd(cursor, database_name, order_by, order_direction):
-    if order_direction == "Ascending" or order_direction == None:
+def sort_data_bd(cursor, database_name, order_by, order_direction, question_id=None):
+    if question_id != None:
+        condition = f"""WHERE question_id = '{question_id}'"""
+    else:
+        condition = ''
+
+    if order_direction == "Ascending":
         order = 'ASC'
-    elif order_direction == "Descending":
+    elif order_direction == "Descending" or order_direction == None:
         order = 'DESC'
 
     if order_by == "Number of Votes" or order_by == None:
@@ -22,6 +27,7 @@ def sort_data_bd(cursor, database_name, order_by, order_direction):
 
     cursor.execute(f"""
         SELECT * FROM {database_name}
+        {condition}
         ORDER BY {category} {order};
     """)
     return cursor.fetchall()
@@ -78,6 +84,7 @@ def get_answer_by_question_id_bd(cursor, question_id):
                             SELECT  id, submission_time, vote_number, question_id, message, image
                             FROM answer
                             WHERE question_id = '{question_id}'
+                            ORDER BY vote_number DESC
                             """)
     return cursor.fetchall()
 
