@@ -1,35 +1,37 @@
-'''
-This is the layer between the server and the data.
-Functions here are called from server.py
-and use generic functions from connection.py.
-'''
 from datetime import datetime
 import database_common
 
 
-def sort_data(data, order_by, order_direction):
-    if order_direction == "Ascending":
-        reverse_for_sort = False
+@database_common.connection_handler
+def sort_data_bd(cursor, database_name, order_by, order_direction):
+    if order_direction == "Ascending" or order_direction == None:
+        order = 'ASC'
     elif order_direction == "Descending":
-        reverse_for_sort = True
-    elif order_direction == None:
-        reverse_for_sort = False
+        order = 'DESC'
 
-    if order_by == "Number of Votes":
-        data.sort(key=lambda x: int(x["vote_number"]), reverse=reverse_for_sort)
+    if order_by == "Number of Votes" or order_by == None:
+        category = "vote_number"
     elif order_by == "Chronology" or order_by == 'Submission time':
-        data.sort(key=lambda x: datetime.strptime(x['submission_time'], '%Y-%m-%d %H:%M'), reverse=reverse_for_sort)
+        category = 'submission_time'
     elif order_by == "Answer length":
-        data.sort(key=lambda x: len(x["message"]), reverse=reverse_for_sort)
+        category = "message"
     elif order_by == 'Title':
-        data.sort(key=lambda x: x["title"], reverse=reverse_for_sort)
+        category = "title"
     elif order_by == 'Message':
-        data.sort(key=lambda x: x["message"], reverse=reverse_for_sort)
+        category = "message"
     elif order_by == 'Number of Views':
-        data.sort(key=lambda x: x["view_number"], reverse=reverse_for_sort)
-    elif order_by == None:
-        data.sort(key=lambda x: int(x["vote_number"]), reverse=True)
-    return data
+        category = "view_number"
+
+    cursor.execute(f"""
+        DROP TABLE IF EXISTS temp_db;
+        SELECT * INTO temp_db FROM question;
+        ALTER TABLE temp_db DROP COLUMN image;
+        ALTER TABLE temp_db DROP COLUMN id;
+        SELECT * FROM temp_db
+        ORDER BY {category} {order};
+    """)
+    sorted_data = cursor.fetchall()
+    return sorted_data
 
 
 @database_common.connection_handler

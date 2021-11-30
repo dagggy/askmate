@@ -19,7 +19,7 @@ def main_page():
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
-        data_manager.sort_data(data, category, order)
+        data_manager.sort_data_bd('question', category, order)
     return render_template('list_questions.html', data=data, headers=headers)
 
 
@@ -30,7 +30,7 @@ def display_question_with_answers(question_id):
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
-        data_manager.sort_data(answers_data_base, category, order)
+        data_manager.sort_data_bd('answer', category, order)
     if request.method == 'POST':
         if request.form.get('vote_answer'):
             id = request.form['vote_answer']
