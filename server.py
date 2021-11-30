@@ -80,9 +80,9 @@ def add_answer(question_id):
 def edit_answer(answer_id):
     if request.method == 'POST':
         new_message = request.form['description']
-        #file = request.files['file']
-        #if file and util.allowed_file(file.filename):
-        #    file.save(UPLOAD_FOLDER / file.filename)
+        file = request.files['file']
+        if file and util.allowed_file(file.filename):
+            file.save(UPLOAD_FOLDER / file.filename)
         data_manager.update_answer_by_id_bd(answer_id, new_message)
         answer_data = data_manager.get_answer_by_id_bd(answer_id)
         return redirect(f'/question/{answer_data["question_id"]}')
