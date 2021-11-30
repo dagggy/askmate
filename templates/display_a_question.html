@@ -52,6 +52,21 @@
             </tr>
             <tr><a href="/question/{{ question['id'] }}/edit_page"> <input type="button" value="Edit Question"> </a></tr>
         </table>
+        <form action="/question/{{ question['id'] }}/new_comment" method="POST">
+                 <p>
+                     Press the button to add a comment:
+                     <a href="/question/{{ question['id'] }}/new_comment">
+                         <input type="button" value="Add comment">
+                     </a>
+                 </p>
+            </form>
+        <h5>Comments to question:</h5>
+        {% for comment in comments %}
+            <fieldset>
+            <legend> {{ comment['submission_time'] }} </legend>
+            {{ comment['message'] }}
+            </fieldset>
+        {% endfor %}
 
         <div>
             <form action="/question/{{ question['id'] }}" method="POST">

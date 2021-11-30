@@ -48,7 +48,10 @@ def display_question_with_answers(question_id):
         image = None
     for answer in answers_data_base:
         answer['submission_time'] = answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base)
+    comments = data_manager.get_comment_by_question_id_bd(question_id)
+    for comment in comments:
+        comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+    return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base, comments=comments)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -73,7 +76,7 @@ def new_question():
         file = request.files['file']
         if file and util.allowed_file(file.filename):
             file.save(UPLOAD_FOLDER / file.filename)
-        data_manager.adding_new_applicant_bd(title, description, file.filename)
+        data_manager.adding_new_question_bd(title, description, file.filename)
         return redirect('/')
     elif request.method == 'GET':
         return render_template('upload_question.html')
@@ -109,6 +112,16 @@ def edit_question(question_id):
         edited_question = data_manager.get_question_by_id_bd(question_id)[0]
         edited_question['submission_time'] = edited_question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
         return render_template('edit_question.html', question=edited_question)
+
+
+@app.route('/question/<question_id>/new_comment', methods=['GET', 'POST'])
+def add_comment_to_question(question_id):
+    question = data_manager.get_question_by_id_bd(question_id)[0]
+    if request.method == 'POST':
+        comment_text = request.form['description']
+        data_manager.adding_new_comment_to_question_bd(comment_text, question_id)
+    return render_template('add_comment_to_question.html', question=question)
+
 
 if __name__ == "__main__":
     app.run(
