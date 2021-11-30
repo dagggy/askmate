@@ -105,7 +105,7 @@ def max_id_question_bd(cursor):
 
 
 @database_common.connection_handler
-def adding_new_applicant_bd(cursor, title, message, image):
+def adding_new_question_bd(cursor, title, message, image):
     current_id = max_id_question_bd()[0]['max'] + 1
     current_time = datetime.now()
     cursor.execute(f"""
@@ -138,3 +138,28 @@ def delete_answer_by_id_bd(cursor, question_id, answer_id):
                         DELETE FROM answer 
                         WHERE id = '{answer_id}' and question_id = '{question_id}'
                         """)
+
+
+@database_common.connection_handler
+def adding_new_comment_to_question_bd(cursor, message, question_id):
+    current_id = max_id_comment_bd()[0]['max'] + 1
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO comment
+                    VALUES('{current_id}', '{question_id}', NULL , '{message}', '{current_time}', NULL);
+                    """)
+
+
+@database_common.connection_handler
+def max_id_comment_bd(cursor):
+    cursor.execute("""SELECT MAX(id) FROM comment""")
+    return cursor.fetchall()
+
+@database_common.connection_handler
+def get_comment_by_question_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                            SELECT *
+                            FROM comment
+                            WHERE question_id = '{question_id}'
+                            """)
+    return cursor.fetchall()
