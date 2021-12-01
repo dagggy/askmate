@@ -63,6 +63,7 @@
                      </a>
                  </p>
             </form>
+      {% if number_of_comments > 0 %}
         <h5>Comments to question:</h5>
         {% for comment in comments %}
             <fieldset>
@@ -70,7 +71,7 @@
             {{ comment['message'] }}
             </fieldset>
         {% endfor %}
-
+        {% endif %}
         <div>
             <form action="/question/{{ question['id'] }}" method="POST">
                  <p>

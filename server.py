@@ -22,7 +22,6 @@ def main_page():
         order = request.args.get('by_order')
         data = data_manager.sort_data_bd('question', category, order)
         search = request.args.get('search')
-        print(search)
         if search != None:
             return redirect(f'/search/{search}')
     return render_template('list_questions.html', data=data, headers=headers)
@@ -43,6 +42,7 @@ def display_question_with_answers(question_id):
     comments = data_manager.get_comment_by_question_id_bd(question_id)
     for comment in comments:
         comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+    number_of_comments = len(comments)
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
@@ -61,7 +61,7 @@ def display_question_with_answers(question_id):
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         answers_data_base = data_manager.sort_data_bd('answer', category, order, question_id)
-    return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base, comments=comments)
+    return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base, comments=comments, number_of_comments=number_of_comments)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -120,7 +120,6 @@ def delete_question(question_id):
 def delete_answer(question_id, answer_id):
     if request.method == 'POST':
         value = list(request.form)
-        print(value)
         if value == ['yes']:
             data_manager.delete_answer_by_id_bd(question_id, answer_id)
             return redirect(f'/question/{question_id}')
@@ -153,6 +152,16 @@ def add_comment_to_question(question_id):
         comment_text = request.form['description']
         data_manager.adding_new_comment_to_question_bd(comment_text, question_id)
     return render_template('add_comment_to_question.html', question=question)
+
+
+@app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
+def add_comment_to_answer(answer_id):
+    answer = data_manager.get_answer_by_id_bd(answer_id)
+    print(answer)
+    return render_template('add_comment_to_answer.html')
+
+
+
 
 @app.route('/search/<search>', methods=['GET', 'POST'])
 def search_result(search):
