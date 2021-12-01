@@ -51,7 +51,6 @@ def display_question_with_answers(question_id):
     list_of_tag_id = data_manager.get_tag_id_by_question_id_bd(question_id)
     for tag_id in list_of_tag_id:
         list_of_tags.append(data_manager.get_tag_by_tag_id_bd(tag_id['tag_id']))
-    print(list_of_tags)
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
