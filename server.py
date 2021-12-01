@@ -3,7 +3,8 @@ import data_manager
 import util
 from pathlib import Path
 
-UPLOAD_FOLDER = Path('static/images/')
+UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

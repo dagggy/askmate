@@ -3,8 +3,6 @@ Utility "layer" | util.py | Helper functions that can be called from any other l
 but mainly from the business logic layer.
 '''
 
-import time
-
 ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg', 'bmp', 'gif'}
 
 
