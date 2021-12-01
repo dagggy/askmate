@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect
 import data_manager
 import util
 from pathlib import Path
+from markupsafe import Markup
 
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
 
@@ -182,9 +183,9 @@ def search_result():
     data = data_manager.search_by_phrase(search_phrase)
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-        question['message'] = question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
-        question['title'] = question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
-
+        question['message'] = Markup(question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>"))
+        question['title'] = Markup(question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>"))
+    print(data)
     return render_template('list_questions.html', data=data, headers=headers)
 
 
