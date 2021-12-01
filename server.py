@@ -21,11 +21,15 @@ def main_page():
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         data = data_manager.sort_data_bd('question', category, order)
+        search = request.args.get('search')
+        if search != None:
+            return redirect(f'/search/{search}')
     return render_template('list_questions.html', data=data, headers=headers)
 
 
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
+    comments_to_answer = []
     data_manager.get_question_by_id_bd(question_id)
     answers_data_base = data_manager.get_answer_by_question_id_bd(question_id)
     question = data_manager.get_question_by_id_bd(question_id)[0]
@@ -36,9 +40,15 @@ def display_question_with_answers(question_id):
         image = None
     for answer in answers_data_base:
         answer['submission_time'] = answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    comments = data_manager.get_comment_by_question_id_bd(question_id)
-    for comment in comments:
+    comments_to_question = data_manager.get_comment_by_question_id_bd(question_id)
+    for comment in comments_to_question:
         comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+    number_of_comments_to_question = len(comments_to_question)
+    for answer in answers_data_base:
+        comment_to_answer = data_manager.get_comment_by_answer_id_bd(answer['id'])
+        if comment_to_answer != []:
+            comments_to_answer.append(data_manager.get_comment_by_answer_id_bd(answer['id']))
+    number_of_comments_to_answer = len(comments_to_answer)
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
@@ -57,7 +67,7 @@ def display_question_with_answers(question_id):
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         answers_data_base = data_manager.sort_data_bd('answer', category, order, question_id)
-    return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base, comments=comments)
+    return render_template('display_a_question.html', question=question, image=image, number_of_comments_to_answer=number_of_comments_to_answer, answers_base=answers_data_base, comments_to_answer=comments_to_answer, comments_to_question=comments_to_question, number_of_comments_to_question=number_of_comments_to_question)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -116,7 +126,6 @@ def delete_question(question_id):
 def delete_answer(question_id, answer_id):
     if request.method == 'POST':
         value = list(request.form)
-        print(value)
         if value == ['yes']:
             data_manager.delete_answer_by_id_bd(question_id, answer_id)
             return redirect(f'/question/{question_id}')
@@ -151,18 +160,26 @@ def add_comment_to_question(question_id):
     return render_template('add_comment_to_question.html', question=question)
 
 
-@app.route("/search")
-def search():
+@app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
+def add_comment_to_answer(answer_id):
+    answer = data_manager.get_answer_by_id_bd(answer_id)
+    if request.method == 'POST':
+        comment_text = request.form['description']
+        data_manager.adding_new_comment_to_answer_bd(comment_text, answer_id)
+    return render_template('add_comment_to_answer.html', answer=answer)
+
+
+
+
+@app.route('/search/<search>', methods=['GET', 'POST'])
+def search_result(search):
     headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
-    search_phrase = request.args.get('search').lower().strip()
-    if search_phrase:
-        data = data_manager.search_by_phrase(search_phrase)
-        for question in data:
-            question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-            question['title'] = question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
-            question['message'] = question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
-        return render_template('list_questions.html', data=data, headers=headers)
-    return redirect('/')
+    data = data_manager.search_by_phrase(search)
+    for question in data:
+        question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+
+    return render_template('search.html', data=data, headers=headers)
+
 
 if __name__ == "__main__":
     app.run(

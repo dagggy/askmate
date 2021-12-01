@@ -63,14 +63,15 @@
                      </a>
                  </p>
             </form>
+      {% if number_of_comments_to_question > 0 %}
         <h5>Comments to question:</h5>
-        {% for comment in comments %}
+        {% for comment in comments_to_question %}
             <fieldset>
             <legend> {{ comment['submission_time'] }} </legend>
             {{ comment['message'] }}
             </fieldset>
         {% endfor %}
-
+        {% endif %}
         <div>
             <form action="/question/{{ question['id'] }}" method="POST">
                  <p>
@@ -133,16 +134,34 @@
                              </form>
                          </td>
                      </table>
-                </form>
                 <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
                     <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">
                         <img class="btn" title="Delete this answer" src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
                     </button>
                     <a href="/answer/{{ answer['id'] }}/edit"><img title="Edit this answer" class="btn" src="../static/icons/edit.png" alt="submit" style="width:40px;height:40px;"></a>
                 </form>
+                 <form action="/question/{{ question['id'] }}/new_comment" method="POST">
+                 <p>
+                     Press the button to add a comment:
+                     <a href="/answer/{{ answer['id'] }}/new-comment">
+                         <input type="button" value="Add comment">
+                     </a>
+                 </p>
+            </form>
+                 {% if number_of_comments_to_answer > 0 %}
+                    <h5>Comments to answer:</h5>
+                    {% for comment in comments_to_answer %}
+                        {% if comment[0]['answer_id'] == answer['id'] %}
+                        <fieldset>
+                        <legend> {{ comment[0]['submission_time'] }} </legend>
+                        {{ comment[0]['message'] }}
+                        </fieldset>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
                 </fieldset>
+                    </form>
                 {% endfor %}
-
         </div>
     </body>
 </html>

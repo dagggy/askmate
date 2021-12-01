@@ -175,9 +175,20 @@ def adding_new_comment_to_question_bd(cursor, message, question_id):
 
 
 @database_common.connection_handler
+def adding_new_comment_to_answer_bd(cursor, message, answer_id):
+    current_id = max_id_comment_bd()[0]['max'] + 1
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO comment
+                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', NULL);
+                    """)
+
+
+@database_common.connection_handler
 def max_id_comment_bd(cursor):
     cursor.execute("""SELECT MAX(id) FROM comment""")
     return cursor.fetchall()
+
 
 @database_common.connection_handler
 def get_comment_by_question_id_bd(cursor, question_id):
@@ -198,4 +209,14 @@ def search_by_phrase(cursor,phrase):
                     WHERE LOWER(CONCAT(question.title, question.message, answer.message)) 
                     LIKE '%{phrase}%';
                     """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_comment_by_answer_id_bd(cursor, answer_id):
+    cursor.execute(f"""
+                        SELECT *
+                        FROM comment
+                        WHERE answer_id = '{answer_id}'
+                        """)
     return cursor.fetchall()
