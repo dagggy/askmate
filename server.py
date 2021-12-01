@@ -46,6 +46,11 @@ def display_question_with_answers(question_id):
         if comment_to_answer != []:
             comments_to_answer.append(data_manager.get_comment_by_answer_id_bd(answer['id']))
     number_of_comments_to_answer = len(comments_to_answer)
+    list_of_tags = []
+    list_of_tag_id = data_manager.get_tag_id_by_question_id_bd(question_id)
+    for tag_id in list_of_tag_id:
+        list_of_tags.append(data_manager.get_tag_by_tag_id_bd(tag_id['tag_id']))
+    print(list_of_tags)
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
@@ -64,7 +69,7 @@ def display_question_with_answers(question_id):
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         answers_data_base = data_manager.sort_data_bd('answer', category, order, question_id)
-    return render_template('display_a_question.html', question=question, image=image, number_of_comments_to_answer=number_of_comments_to_answer, answers_base=answers_data_base, comments_to_answer=comments_to_answer, comments_to_question=comments_to_question, number_of_comments_to_question=number_of_comments_to_question)
+    return render_template('display_a_question.html', question=question, image=image, number_of_comments_to_answer=number_of_comments_to_answer, answers_base=answers_data_base, comments_to_answer=comments_to_answer, comments_to_question=comments_to_question, number_of_comments_to_question=number_of_comments_to_question, list_of_tags=list_of_tags)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -189,12 +194,12 @@ def add_tag_to_question(question_id):
     tags = data_manager.get_all_tags()
     if request.method == 'POST':
         if request.form.get('thisistag'):
-            new_tag = request.form.get('thisistag')
-            data_manager.adding_new_tag_bd(new_tag)
+            tag = request.form.get('thisistag')
+            data_manager.adding_new_tag_bd(tag)
         elif request.form.get('all_tags'):
             tag = request.form.get('all_tags')
-            return redirect(f'/question/{question["id"]}')
-
+        tag_id = data_manager.get_tag_id_by_tag_bd(tag)
+        data_manager.add_tag_to_question_tag_bd(question_id, tag_id[0]['id'])
         return redirect(f'/question/{question["id"]}')
     return render_template('add_tag_to_question.html', question=question, tags=tags)
 

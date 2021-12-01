@@ -29,7 +29,11 @@
                     <p>{{ question['submission_time'] }}</p>
                     Question: #{{ question['id'] }} &nbsp;
                     Number of view: {{ question['view_number'] }} &nbsp;
-                    Number of vote: {{ question['vote_number'] }}
+                    Number of vote: {{ question['vote_number'] }} &nbsp;
+                    Tags:
+                    {% for tag in list_of_tags %}
+                        #{{ tag[0]['name'] }}
+                    {% endfor %}
                 </td>
             </tr>
             <tr>
