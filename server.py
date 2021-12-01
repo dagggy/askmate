@@ -21,9 +21,6 @@ def main_page():
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         data = data_manager.sort_data_bd('question', category, order)
-        search = request.args.get('search')
-        if search != None:
-            return redirect(f'/search/{search}')
     return render_template('list_questions.html', data=data, headers=headers)
 
 
@@ -157,6 +154,7 @@ def add_comment_to_question(question_id):
     if request.method == 'POST':
         comment_text = request.form['description']
         data_manager.adding_new_comment_to_question_bd(comment_text, question_id)
+        return redirect(f'/question/{question_id}')
     return render_template('add_comment_to_question.html', question=question)
 
 
@@ -166,19 +164,24 @@ def add_comment_to_answer(answer_id):
     if request.method == 'POST':
         comment_text = request.form['description']
         data_manager.adding_new_comment_to_answer_bd(comment_text, answer_id)
+        question_id = answer['question_id']
+        return redirect(f'/question/{question_id}')
     return render_template('add_comment_to_answer.html', answer=answer)
 
 
 
 
-@app.route('/search/<search>', methods=['GET', 'POST'])
-def search_result(search):
+@app.route('/search')
+def search_result():
     headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
-    data = data_manager.search_by_phrase(search)
+    search_phrase = request.args['search'].lower().strip()
+    data = data_manager.search_by_phrase(search_phrase)
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+        question['message'] = question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
+        question['title'] = question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
 
-    return render_template('search.html', data=data, headers=headers)
+    return render_template('list_questions.html', data=data, headers=headers)
 
 
 if __name__ == "__main__":
