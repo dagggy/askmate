@@ -251,3 +251,41 @@ def get_all_tags(cursor):
         FROM tag
         """)
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_tag_id_by_tag_bd(cursor, tag):
+    cursor.execute(f"""
+                        SELECT id
+                        FROM tag
+                        WHERE name = '{tag}'
+                        """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def add_tag_to_question_tag_bd(cursor, question_id, tag_id):
+    cursor.execute(f"""
+                        INSERT INTO question_tag
+                        VALUES('{question_id}', '{tag_id}');
+                        """)
+
+
+@database_common.connection_handler
+def get_tag_id_by_question_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                        SELECT tag_id
+                        FROM question_tag
+                        WHERE question_id = '{question_id}'
+                        """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_tag_by_tag_id_bd(cursor, tag_id):
+    cursor.execute(f"""
+                        SELECT name
+                        FROM tag
+                        WHERE id = '{tag_id}'
+                        """)
+    return cursor.fetchall()
