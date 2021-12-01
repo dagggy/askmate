@@ -80,6 +80,7 @@ def add_answer(question_id):
     elif request.method == 'GET':
         return render_template('upload_answer.html', question_id=question['id'])
 
+
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
 def edit_answer(answer_id):
     if request.method == 'POST':
@@ -169,8 +170,6 @@ def add_comment_to_answer(answer_id):
     return render_template('add_comment_to_answer.html', answer=answer)
 
 
-
-
 @app.route('/search')
 def search_result():
     headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
@@ -182,6 +181,22 @@ def search_result():
         question['title'] = question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
 
     return render_template('list_questions.html', data=data, headers=headers)
+
+
+@app.route('/question/<question_id>/new_tag', methods=['GET', 'POST'])
+def add_tag_to_question(question_id):
+    question = data_manager.get_question_by_id_bd(question_id)[0]
+    tags = data_manager.get_all_tags()
+    if request.method == 'POST':
+        if request.form.get('thisistag'):
+            new_tag = request.form.get('thisistag')
+            data_manager.adding_new_tag_bd(new_tag)
+        elif request.form.get('all_tags'):
+            tag = request.form.get('all_tags')
+            return redirect(f'/question/{question["id"]}')
+
+        return redirect(f'/question/{question["id"]}')
+    return render_template('add_tag_to_question.html', question=question, tags=tags)
 
 
 if __name__ == "__main__":

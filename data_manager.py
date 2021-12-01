@@ -220,3 +220,27 @@ def get_comment_by_answer_id_bd(cursor, answer_id):
                         WHERE answer_id = '{answer_id}'
                         """)
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def adding_new_tag_bd(cursor, new_tag):
+    current_id = max_id_tag_bd()[0]['max'] + 1
+    cursor.execute(f"""
+                        INSERT INTO tag
+                        VALUES('{current_id}', '{new_tag}');
+                        """)
+
+
+@database_common.connection_handler
+def max_id_tag_bd(cursor):
+    cursor.execute("""SELECT MAX(id) FROM tag""")
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_all_tags(cursor):
+    cursor.execute("""
+        SELECT *
+        FROM tag
+        """)
+    return cursor.fetchall()
