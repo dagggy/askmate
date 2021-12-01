@@ -82,3 +82,7 @@ table.questions_table  td, table.questions_table  th {
   background-color: antiquewhite;
   direction: ltr;
 }
+mark {
+  background-color: yellow;
+  color: black;
+}

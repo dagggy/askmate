@@ -70,24 +70,14 @@
              {% endfor %}
          </tr>
          </form>
-         {% for dict in data %}
-            <tr>
-                 {% for key, value in dict.items() %}
-                     {% if key == "title" %}
-                         <td>
-                             <a href="/question/{{ dict["id"] }}">{{ value }}</a>
-                         </td>
-                     {% elif key == "submission_time" %}
-                         <td> {{ value }} </td>
-                     {% elif key == "message" %}
-                         <td> {{ value }} </td>
-                     {% elif key == "view_number" %}
-                         <td> {{ value }} </td>
-                      {% elif key == "vote_number" %}
-                         <td> {{ value }} </td>
-                     {% endif %}
-                 {% endfor %}
-            </tr>
+            {% for question in data %}
+          <tr>
+              <td>{{ question['submission_time'] }}</td>
+              <td>{{ question['view_number'] }}</td>
+              <td>{{ question['vote_number'] }}</td>
+              <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+              <td>{{ question['message'] }}</td>
+          </tr>
             {% endfor %}
      </table>
  </body>
