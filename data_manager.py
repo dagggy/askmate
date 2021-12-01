@@ -179,6 +179,7 @@ def max_id_comment_bd(cursor):
     cursor.execute("""SELECT MAX(id) FROM comment""")
     return cursor.fetchall()
 
+
 @database_common.connection_handler
 def get_comment_by_question_id_bd(cursor, question_id):
     cursor.execute(f"""
@@ -196,4 +197,14 @@ def search_by_phrase(cursor,phrase):
                     WHERE title LIKE '%{phrase}%'
                         OR message LIKE '%{phrase}%';
                     """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_comment_by_answer_id_bd(cursor, answer_id):
+    cursor.execute(f"""
+                        SELECT *
+                        FROM comment
+                        WHERE answer_id = '{answer_id}'
+                        """)
     return cursor.fetchall()

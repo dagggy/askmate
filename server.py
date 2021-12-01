@@ -29,6 +29,7 @@ def main_page():
 
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
+    comments_to_answer = []
     data_manager.get_question_by_id_bd(question_id)
     answers_data_base = data_manager.get_answer_by_question_id_bd(question_id)
     question = data_manager.get_question_by_id_bd(question_id)[0]
@@ -39,10 +40,15 @@ def display_question_with_answers(question_id):
         image = None
     for answer in answers_data_base:
         answer['submission_time'] = answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    comments = data_manager.get_comment_by_question_id_bd(question_id)
-    for comment in comments:
+    comments_to_question = data_manager.get_comment_by_question_id_bd(question_id)
+    for comment in comments_to_question:
         comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    number_of_comments = len(comments)
+    number_of_comments_to_question = len(comments_to_question)
+    for answer in answers_data_base:
+        comment_to_answer = data_manager.get_comment_by_answer_id_bd(answer['id'])
+        if comment_to_answer != []:
+            comments_to_answer.append(data_manager.get_comment_by_answer_id_bd(answer['id']))
+    number_of_comments_to_answer = len(comments_to_answer)
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
@@ -61,7 +67,7 @@ def display_question_with_answers(question_id):
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         answers_data_base = data_manager.sort_data_bd('answer', category, order, question_id)
-    return render_template('display_a_question.html', question=question, image=image, answers_base=answers_data_base, comments=comments, number_of_comments=number_of_comments)
+    return render_template('display_a_question.html', question=question, image=image, number_of_comments_to_answer=number_of_comments_to_answer, answers_base=answers_data_base, comments_to_answer=comments_to_answer, comments_to_question=comments_to_question, number_of_comments_to_question=number_of_comments_to_question)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
