@@ -163,8 +163,10 @@ def add_comment_to_question(question_id):
 @app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_answer(answer_id):
     answer = data_manager.get_answer_by_id_bd(answer_id)
-    print(answer)
-    return render_template('add_comment_to_answer.html')
+    if request.method == 'POST':
+        comment_text = request.form['description']
+        data_manager.adding_new_comment_to_answer_bd(comment_text, answer_id)
+    return render_template('add_comment_to_answer.html', answer=answer)
 
 
 

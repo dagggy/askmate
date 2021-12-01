@@ -140,6 +140,14 @@
                     </button>
                     <a href="/answer/{{ answer['id'] }}/edit"><img title="Edit this answer" class="btn" src="../static/icons/edit.png" alt="submit" style="width:40px;height:40px;"></a>
                 </form>
+                 <form action="/question/{{ question['id'] }}/new_comment" method="POST">
+                 <p>
+                     Press the button to add a comment:
+                     <a href="/answer/{{ answer['id'] }}/new-comment">
+                         <input type="button" value="Add comment">
+                     </a>
+                 </p>
+            </form>
                  {% if number_of_comments_to_answer > 0 %}
                     <h5>Comments to answer:</h5>
                     {% for comment in comments_to_answer %}
