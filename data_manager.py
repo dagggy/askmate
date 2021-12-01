@@ -195,8 +195,7 @@ def search_by_phrase(cursor,phrase):
                     FROM question
                     LEFT OUTER JOIN answer
                     ON question.id=answer.question_id
-                    WHERE question.title LIKE '%{phrase}%'
-                        OR question.message LIKE '%{phrase}%'
-                        OR answer.message LIKE '%{phrase}%';
+                    WHERE LOWER(CONCAT(question.title, question.message, answer.message)) 
+                    LIKE '%{phrase}%';
                     """)
     return cursor.fetchall()

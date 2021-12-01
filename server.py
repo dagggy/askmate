@@ -21,10 +21,6 @@ def main_page():
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         data = data_manager.sort_data_bd('question', category, order)
-        search = request.args.get('search')
-        print(search)
-        if search != None:
-            return redirect(f'/search/{search}')
     return render_template('list_questions.html', data=data, headers=headers)
 
 
@@ -154,15 +150,19 @@ def add_comment_to_question(question_id):
         data_manager.adding_new_comment_to_question_bd(comment_text, question_id)
     return render_template('add_comment_to_question.html', question=question)
 
-@app.route('/search/<search>', methods=['GET', 'POST'])
-def search_result(search):
+
+@app.route("/search")
+def search():
     headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
-    data = data_manager.search_by_phrase(search)
-    for question in data:
-        question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-
-    return render_template('search.html', data=data, headers=headers)
-
+    search_phrase = request.args.get('search').lower().strip()
+    if search_phrase:
+        data = data_manager.search_by_phrase(search_phrase)
+        for question in data:
+            question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+            question['title'] = question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
+            question['message'] = question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>")
+        return render_template('list_questions.html', data=data, headers=headers)
+    return redirect('/')
 
 if __name__ == "__main__":
     app.run(
