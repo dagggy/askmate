@@ -114,7 +114,7 @@
                      <legend> Answer #{{ answer['id'] }}_______{{ answer['submission_time'] }} </legend>
                      <p>{{ answer['message'] }}</p>
                      {% if image != None %}
-                        <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
+                        <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image' sizes="100"></p><br>
                      {% endif %}
                      <table>
                          <td>
