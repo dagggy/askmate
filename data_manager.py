@@ -32,11 +32,18 @@ def sort_data_bd(cursor, database_name, order_by, order_direction, question_id=N
     """)
     return cursor.fetchall()
 
+
 @database_common.connection_handler
-def get_question_bd(cursor):
-    cursor.execute("""
+def get_question_bd(cursor, size_limit=None):
+    if size_limit:
+        condition = f"""ORDER BY submission_time DESC 
+                        LIMIT '{size_limit}'"""
+    else:
+        condition = ''
+    cursor.execute(f"""
         SELECT *
         FROM question
+        {condition}
         """)
     return cursor.fetchall()
 

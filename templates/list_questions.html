@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ask Mate</title>
+    <title>AskMate | Question List</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -16,10 +16,6 @@
             </th>
         </tr>
     </table>
-    <marquee class="marquee">
-    Here you can ask anything and get an answer very quickly.  You can also vote for your favorite questions or answers.  Good luck :)
-    </marquee>
-    &nbsp;&nbsp;
       <form class="search" action="/search" method="GET">
           <input type="text" placeholder="Search..." name="search">
           <button type="submit">Search</button>

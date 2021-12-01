@@ -5,24 +5,30 @@ from pathlib import Path
 from markupsafe import Markup
 
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
-
+QUESTION_TABLE_HEADERS = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-@app.route("/")
-@app.route('/list', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def main_page():
+    data = data_manager.get_question_bd(size_limit = 5)
+    for question in data:
+        question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+
+    return render_template('main_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
+
+@app.route('/list', methods=['GET', 'POST'])
+def list_question_page():
     data = data_manager.get_question_bd()
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         data = data_manager.sort_data_bd('question', category, order)
-    return render_template('list_questions.html', data=data, headers=headers)
+    return render_template('list_questions.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
@@ -173,7 +179,6 @@ def add_comment_to_answer(answer_id):
 
 @app.route('/search')
 def search_result():
-    headers = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
     search_phrase = request.args['search'].lower().strip()
     data = data_manager.search_by_phrase(search_phrase)
     for question in data:
@@ -181,7 +186,7 @@ def search_result():
         question['message'] = Markup(question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>"))
         question['title'] = Markup(question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>"))
     print(data)
-    return render_template('list_questions.html', data=data, headers=headers)
+    return render_template('list_questions.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
 @app.route('/question/<question_id>/new_tag', methods=['GET', 'POST'])
