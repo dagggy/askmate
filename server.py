@@ -195,8 +195,14 @@ def add_comment_to_answer(answer_id):
 @app.route('/comment/<comment_id>/edit', methods=['GET', 'POST'])
 def edit_comment(comment_id):
     comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
-    answer = data_manager.get_record_by_primary_key({'answer_id': comment["answer_id"]}, 'answer')
-    question = data_manager.get_record_by_primary_key({'question_id': comment["question_id"]}, 'question')
+    if comment["answer_id"]:
+        answer = data_manager.get_record_by_primary_key({'answer_id': comment["answer_id"]}, 'comment')
+    else:
+        answer = {'message': 'Upss! It seems that this data have been lost...'}
+    if comment["question_id"]:
+        question = data_manager.get_record_by_primary_key({'question_id': comment["question_id"]}, 'comment')
+    else:
+        question = {'message': 'Upss! It seems that this data have been lost...'}
 
     if request.method == 'POST':
         comment_text = request.form['description']
