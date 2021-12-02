@@ -192,6 +192,29 @@ def add_comment_to_answer(answer_id):
         return redirect(f'/question/{question_id}')
     return render_template('add_comment_to_answer.html', answer=answer)
 
+
+@app.route('/comment/<comment_id>/delete', methods=['GET', 'POST'])
+def delete_comment(comment_id):
+    comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
+    if request.method == 'POST':
+        value = list(request.form)
+        if value == ['yes']:
+            data_manager.delete_comment(comment_id)
+            if comment['question_id'] is not None:
+                return redirect(f'/question/{comment["question_id"]}')
+            else:
+                answer = data_manager.get_record_by_primary_key({'id': comment['answer_id']}, 'answer')
+                return redirect(f"/question/{answer['question_id']}")
+        else:
+            if comment['question_id'] is not None:
+                return redirect(f'/question/{comment["question_id"]}')
+            else:
+                answer = data_manager.get_record_by_primary_key({'id': comment['answer_id']}, 'answer')
+                return redirect(f"/question/{answer['question_id']}")
+    elif request.method == 'GET':
+        return render_template('confirm_comment_deletion.html')
+
+
 @app.route('/comment/<comment_id>/edit', methods=['GET', 'POST'])
 def edit_comment(comment_id):
     comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')

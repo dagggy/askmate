@@ -171,6 +171,7 @@
                                 , Edited {{ comment['edited_count'] }} time(s)
                             {% endif %}
                             | <a href="/comment/{{comment['id']}}/edit">Edit comment...</a>
+                            | <a href="/comment/{{ comment['id'] }}/delete">Delete comment...</a>
                         </legend>
                         {{ comment['message'] }}
                         </fieldset>

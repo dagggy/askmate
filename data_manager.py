@@ -245,6 +245,14 @@ def delete_tag_from_question(cursor, question_id, tag_id):
     """)
 
 
+@database_common.connection_handler
+def delete_comment(cursor, comment_id):
+    cursor.execute(f"""
+                    DELETE FROM comment
+                    WHERE id = '{comment_id}'
+    """)
+
+
 ###################################################
 
 @database_common.connection_handler
