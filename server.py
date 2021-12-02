@@ -12,15 +12,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/', methods=['GET', 'POST'])
-def main_page():
-    data = data_manager.get_questions_data_from_db(size_limit = 5)
+def home_page():
+    data = data_manager.get_top_records('question', 'submission_time', size_limit=5)
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    return render_template('main_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
+    return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 @app.route('/list', methods=['GET', 'POST'])
 def list_question_page():
-    data = data_manager.get_questions_data_from_db()
+    data = data_manager.get_sorted_data('question')
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     if request.method == 'GET':
@@ -33,8 +33,8 @@ def list_question_page():
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
     comments_to_answer = []
-    answers_data_base = data_manager.get_answer_by_question_id_bd(question_id)
-    question = data_manager.get_record_by_id(question_id, 'question')
+    answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
+    question = data_manager.get_record_by_primary_key(question_id, 'question')
     question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     try:
         image = question['image']
@@ -42,14 +42,14 @@ def display_question_with_answers(question_id):
         image = None
     for answer in answers_data_base:
         answer['submission_time'] = answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    comments_to_question = data_manager.get_comment_by_question_id_bd(question_id)
+    comments_to_question = data_manager.get_records_by_foreign_key({'id': question_id}, 'question')
     for comment in comments_to_question:
         comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     number_of_comments_to_question = len(comments_to_question)
     for answer in answers_data_base:
-        comment_to_answer = data_manager.get_comment_by_answer_id_bd(answer['id'])
+        comment_to_answer = data_manager.get_records_by_foreign_key({'answer_id': answer['id']}, 'comment')
         if comment_to_answer != []:
-            comments_to_answer.append(data_manager.get_comment_by_answer_id_bd(answer['id']))
+            comments_to_answer.append(data_manager.get_records_by_foreign_key({'answer_id': answer['id']}, 'comment'))
     number_of_comments_to_answer = len(comments_to_answer)
     list_of_tags = []
     list_of_tag_id = data_manager.get_tag_id_by_question_id_bd(question_id)
@@ -60,13 +60,13 @@ def display_question_with_answers(question_id):
         if request.form.get('vote_answer'):
             id = request.form['vote_answer']
             add = int(request.form['vote'])
-            data_manager.update_record(id, add, 'vote_number', 'answer')
+            data_manager.update_record(id, {'vote_number': add}, 'answer')
         if request.form.get('vote_question'):
             id = request.form['vote_question']
             add = int(request.form['vote'])
-            data_manager.update_record(id, add, 'vote_number', 'question')
+            data_manager.update_record(id, {'vote_number': add}, 'question')
             return redirect(f'/question/{question_id}')
-        answers_data_base = data_manager.get_answer_by_question_id_bd(question_id)
+        answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
 
     if request.method == 'GET':
         category = request.args.get('by_category')
@@ -77,7 +77,7 @@ def display_question_with_answers(question_id):
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def add_answer(question_id):
-    question = data_manager.get_record_by_id(question_id, 'question')
+    question = data_manager.get_record_by_primary_key(question_id, 'question')
     if request.method == 'POST':
         description = request.form['description']
         file = request.files['file']
@@ -91,7 +91,7 @@ def add_answer(question_id):
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
 def edit_answer(answer_id):
-    answer_data = data_manager.get_record_by_id(answer_id, 'answer')
+    answer_data = data_manager.get_record_by_primary_key(answer_id, 'answer')
     if request.method == 'POST':
         new_message = request.form['description']
         file = request.files['file']
@@ -103,11 +103,10 @@ def edit_answer(answer_id):
                 file = answer_data['image']
         else:
             file = answer_data['image']
-        data_manager.update_record(answer_id, new_message, 'message', 'answer')
-        data_manager.update_record(answer_id, file, 'image', 'answer')
+        data_manager.update_record(answer_id, {'message': new_message, 'image': file}, 'answer')
         return redirect(f'/question/{answer_data["question_id"]}')
     if request.method == 'GET':
-        edited_answer = data_manager.get_record_by_id(answer_id, 'answer')
+        edited_answer = data_manager.get_record_by_primary_key(answer_id, 'answer')
         edited_answer['submission_time'] = edited_answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
         return render_template('edit_answer.html', answer=edited_answer)
 
@@ -150,7 +149,7 @@ def delete_answer(question_id, answer_id):
 
 @app.route('/question/<question_id>/edit_page', methods=['GET', 'POST'])
 def edit_question(question_id):
-    question_data = data_manager.get_record_by_id(question_id, 'question')
+    question_data = data_manager.get_record_by_primary_key(question_id, 'question')
     if request.method == 'POST':
         new_title = request.form['title']
         new_question = request.form['message']
@@ -163,20 +162,18 @@ def edit_question(question_id):
                 file = question_data['image']
         else:
             file = question_data['image']
-        data_manager.update_record(question_id, new_title, 'title', 'question')
-        data_manager.update_record(question_id, new_question, 'message', 'question')
-        data_manager.update_record(question_id, file, 'image', 'question')
+        data_manager.update_record(question_id, {'title': new_title, 'message': new_question, 'image': file }, 'question')
         return redirect(f'/question/{question_id}')
 
     elif request.method == 'GET':
-        edited_question = data_manager.get_record_by_id(question_id, 'question')
+        edited_question = data_manager.get_record_by_primary_key(question_id, 'question')
         edited_question['submission_time'] = edited_question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
         return render_template('edit_question.html', question=edited_question)
 
 
 @app.route('/question/<question_id>/new_comment', methods=['GET', 'POST'])
 def add_comment_to_question(question_id):
-    question = data_manager.get_record_by_id(question_id, 'question')
+    question = data_manager.get_record_by_primary_key(question_id, 'question')
     if request.method == 'POST':
         comment_text = request.form['description']
         data_manager.adding_new_comment_to_question_bd(comment_text, question_id)
@@ -186,7 +183,7 @@ def add_comment_to_question(question_id):
 
 @app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_answer(answer_id):
-    answer = data_manager.get_record_by_id(answer_id, 'answer')
+    answer = data_manager.get_record_by_primary_key(answer_id, 'answer')
     if request.method == 'POST':
         comment_text = request.form['description']
         data_manager.adding_new_comment_to_answer_bd(comment_text, answer_id)
@@ -208,7 +205,7 @@ def search_result():
 
 @app.route('/question/<question_id>/new_tag', methods=['GET', 'POST'])
 def add_tag_to_question(question_id):
-    question = data_manager.get_record_by_id(question_id, 'question')
+    question = data_manager.get_record_by_primary_key(question_id, 'question')
     tags = data_manager.get_all_tags()
     if request.method == 'POST':
         if request.form.get('thisistag'):
@@ -218,6 +215,7 @@ def add_tag_to_question(question_id):
             tag = request.form.get('all_tags')
         tag_id = data_manager.get_tag_id_by_tag_bd(tag)
         data_manager.add_tag_to_question_tag_bd(question_id, tag_id[0]['id'])
+
         return redirect(f'/question/{question["id"]}')
     return render_template('add_tag_to_question.html', question=question, tags=tags)
 

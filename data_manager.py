@@ -1,16 +1,30 @@
-##### get_question_bd -> get_questions_data_from_db
-##### sort_data_bd  ->  get_sorted_data
-##### get_question_by_id_bd , get_answer_by_id_bd  ->  get_record_by_id
+'''data_manager.py
+##### sort_data_bd, get_answer_by_question_id_bd, get_question_bd  ->  get_sorted_data
+##### get_question_by_id_bd , get_answer_by_id_bd  ->  get_record_by_primary_key
+#####   ->  get_records_by_foreign_key
 ##### update_answer_by_id_bd, update_question_by_id_bd, update_answer_by_vote_bd, update_question_by_vote_bd  ->  update_record
-#####
+##### sorting by message and title now works correctly
+##### max_id_answer_bd, max_id_question_bd, max_id_comment_bd, max_id_tag_bd  ->  get_next_id
 
+templates
+##### main_page.html  ->  home_page.html
+'''
 
-from datetime import datetime
 import database_common
+from datetime import datetime
+'''
+NEW_RECORD = {
+    'answer': "'{get_next_id('answer')}', '{datetime.now()}', 0, '{question_id}', '{message}', '{image}'",
+    'question': "'{get_next_id('question')}', '{datetime.now()}', 0, 0, '{title}', '{message}', '{image}'",
+    'comment': "'{get_next_id('comment')}', '{question_id}', '{answer_id}', '{message}','{datetime.now()}', '{edited_count}'",
+    'tag': "'{get_next_id('tag')}', '{name}'",
+    'question_tag': "'{question_id}', '{answer_id}'"
+}
+'''
 
 
 @database_common.connection_handler
-def get_sorted_data(cursor, database_name, order_by, order_direction, question_id=None):
+def get_sorted_data(cursor, table_name, order_by=None, order_direction=None, question_id=None):
     if question_id != None:
         condition = f"""WHERE question_id = '{question_id}'"""
     else:
@@ -26,161 +40,73 @@ def get_sorted_data(cursor, database_name, order_by, order_direction, question_i
     elif order_by == "Chronology":
         category = 'submission_time'
     elif order_by == 'Title':
-        category = "title"
+        category = "LOWER(title)"
     elif order_by == 'Message':
-        category = "message"
+        category = "LOWER(message)"
     elif order_by == 'Number of Views':
         category = "view_number"
 
     cursor.execute(f"""
-        SELECT * FROM {database_name}
+        SELECT * FROM {table_name}
         {condition}
         ORDER BY {category} {order};
     """)
     return cursor.fetchall()
 
-
+###############################################
 @database_common.connection_handler
-def get_questions_data_from_db(cursor, size_limit=None):
-    if size_limit:
-        condition = f"""ORDER BY submission_time DESC 
-                        LIMIT '{size_limit}'"""
-    else:
-        condition = ''
+def get_top_records(cursor, table_name, column_name, size_limit):
     cursor.execute(f"""
         SELECT *
-        FROM question
-        {condition};
+        FROM {table_name}
+        ORDER BY {column_name} DESC 
+        LIMIT {size_limit};
         """)
     return cursor.fetchall()
 
+################################################
+
+''' Example changes_dict = {'title': 'updated title', 'vote_number': 1} '''
+@database_common.connection_handler
+def update_record(cursor, record_id, changes_dict, table_name):
+    for column_name, value in changes_dict.items():
+        if type(value) == int:
+            data_to_set = f"""{column_name} = {column_name} + {value}"""
+        else:
+            data_to_set = f"""{column_name} = '{value}'"""
+        cursor.execute(f"""
+                                UPDATE {table_name}
+                                SET {data_to_set}
+                                WHERE id = {record_id};
+                                """)
+
+
+##############################################
+@database_common.connection_handler
+def get_next_id(cursor, table_name):
+    cursor.execute(f"""SELECT MAX(id) FROM {table_name };""")
+    return cursor.fetchall()[0]['max'] + 1
+
 
 @database_common.connection_handler
-def get_record_by_id(cursor, record_id, database_name):
+def get_record_by_primary_key(cursor, record_id, table_name):
     cursor.execute(f"""
             SELECT *
-            FROM {database_name}
+            FROM {table_name}
             WHERE id = '{record_id}';
             """)
     return cursor.fetchall()[0]
 
 
+''' Example fk_dict = {'question_id': 12} '''
 @database_common.connection_handler
-def update_record(cursor, record_id, value, column_name, table_name):
-    if type(value) == int:
-        data_to_set = f"""{column_name} = {column_name} + {value}"""
-    else:
-        data_to_set = f"""{column_name} = '{value}'"""
-    cursor.execute(f"""
-                            UPDATE {table_name}
-                            SET {data_to_set}
-                            WHERE id = {record_id};
-                            """)
-
-
-@database_common.connection_handler
-def update_question_by_id_bd(cursor, question_id):
-    cursor.execute(f"""
-                        UPDATE question
-                        SET view_number = view_number + 1
-                        WHERE id = '{question_id}';
-                        """)
-
-
-@database_common.connection_handler
-def update_question_by_id_bd(cursor, id, title, message, image):
-    current_time = datetime.now()
-    cursor.execute(f"""
-                        UPDATE question
-                        SET vote_number = '0', view_number = '0', title = '{title}', message = '{message}', submission_time = '{current_time}', image = '{image}'
-                        WHERE id = '{id}';
-                        """)
-
-
-@database_common.connection_handler
-def get_answer_by_question_id_bd(cursor, question_id):
-    cursor.execute(f"""
-                            SELECT  id, submission_time, vote_number, question_id, message, image
-                            FROM answer
-                            WHERE question_id = '{question_id}'
-                            ORDER BY vote_number DESC
-                            """)
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
-def max_id_answer_bd(cursor):
-    cursor.execute("""SELECT MAX(id) FROM answer""")
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
-def adding_new_answer_bd(cursor, question_id, message, image):
-    current_id = max_id_answer_bd()[0]['max'] + 1
-    current_time = datetime.now()
-    cursor.execute(f"""
-                    INSERT INTO answer
-                    VALUES('{current_id}', '{current_time}', '0', '{question_id}', '{message}', '{image}');
+def get_records_by_foreign_key(cursor, fk_dict, table_name):
+    for column_name, value in fk_dict.items():
+        cursor.execute(f"""
+                    SELECT *
+                    FROM {table_name}
+                    WHERE {column_name} = '{value}';
                     """)
-
-
-@database_common.connection_handler
-def max_id_question_bd(cursor):
-    cursor.execute("""SELECT MAX(id) FROM question""")
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
-def adding_new_question_bd(cursor, title, message, image):
-    current_id = max_id_question_bd()[0]['max'] + 1
-    current_time = datetime.now()
-    cursor.execute(f"""
-                    INSERT INTO question
-                    VALUES('{current_id}', '{current_time}', '0', '0', '{title}', '{message}', '{image}');
-                    """)
-
-
-@database_common.connection_handler
-def delete_question_by_id_bd(cursor, question_id):
-    cursor.execute(f"""
-                        DELETE FROM question 
-                        WHERE id = '{question_id}'
-                        """)
-
-
-
-
-@database_common.connection_handler
-def delete_answer_by_id_bd(cursor, question_id, answer_id):
-    cursor.execute(f"""
-                        DELETE FROM answer 
-                        WHERE id = '{answer_id}' and question_id = '{question_id}'
-                        """)
-
-
-@database_common.connection_handler
-def adding_new_comment_to_question_bd(cursor, message, question_id):
-    current_id = max_id_comment_bd()[0]['max'] + 1
-    current_time = datetime.now()
-    cursor.execute(f"""
-                    INSERT INTO comment
-                    VALUES('{current_id}', '{question_id}', NULL , '{message}', '{current_time}', NULL);
-                    """)
-
-
-@database_common.connection_handler
-def adding_new_comment_to_answer_bd(cursor, message, answer_id):
-    current_id = max_id_comment_bd()[0]['max'] + 1
-    current_time = datetime.now()
-    cursor.execute(f"""
-                    INSERT INTO comment
-                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', NULL);
-                    """)
-
-
-@database_common.connection_handler
-def max_id_comment_bd(cursor):
-    cursor.execute("""SELECT MAX(id) FROM comment""")
     return cursor.fetchall()
 
 
@@ -194,40 +120,12 @@ def get_comment_by_question_id_bd(cursor, question_id):
     return cursor.fetchall()
 
 @database_common.connection_handler
-def search_by_phrase(cursor,phrase):
-    cursor.execute(f"""
-                    SELECT DISTINCT question.id, question.submission_time, question.view_number, question.vote_number, question.title, question.message
-                    FROM question
-                    LEFT OUTER JOIN answer
-                    ON question.id=answer.question_id
-                    WHERE LOWER(CONCAT(question.title, question.message, answer.message)) 
-                    LIKE '%{phrase}%';
-                    """)
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
 def get_comment_by_answer_id_bd(cursor, answer_id):
     cursor.execute(f"""
                         SELECT *
                         FROM comment
                         WHERE answer_id = '{answer_id}'
                         """)
-    return cursor.fetchall()
-
-
-@database_common.connection_handler
-def adding_new_tag_bd(cursor, new_tag):
-    current_id = max_id_tag_bd()[0]['max'] + 1
-    cursor.execute(f"""
-                        INSERT INTO tag
-                        VALUES('{current_id}', '{new_tag}');
-                        """)
-
-
-@database_common.connection_handler
-def max_id_tag_bd(cursor):
-    cursor.execute("""SELECT MAX(id) FROM tag""")
     return cursor.fetchall()
 
 
@@ -250,13 +148,6 @@ def get_tag_id_by_tag_bd(cursor, tag):
     return cursor.fetchall()
 
 
-@database_common.connection_handler
-def add_tag_to_question_tag_bd(cursor, question_id, tag_id):
-    cursor.execute(f"""
-                        INSERT INTO question_tag
-                        VALUES('{question_id}', '{tag_id}');
-                        """)
-
 
 @database_common.connection_handler
 def get_tag_id_by_question_id_bd(cursor, question_id):
@@ -276,3 +167,124 @@ def get_tag_by_tag_id_bd(cursor, tag_id):
                         WHERE id = '{tag_id}'
                         """)
     return cursor.fetchall()
+########################################################################
+''' Example content_dict = {'question_id': 12, 'message': "AbraKadabra"} '''
+'''
+@database_common.connection_handler
+def add_new_record(cursor, content_dict, table_name):
+    pk_id = get_next_id(table_name)
+    value_content = (f"{pk_id}, {name}").format(**content_dict)
+
+    if table_name == 'answer':
+        query = "INSERT INTO answer VALUES('{pk_id}', '{datetime.now()}', 0, '{question_id}', '{message}', '{image}');".format(**content_dict)
+    elif table_name == 'question':
+        query = "INSERT INTO question VALUES('{pk_id}', '{datetime.now()}', 0, 0, '{title}', '{message}', '{image}');".format(**content_dict)
+    elif table_name == 'comment':
+        query = "INSERT INTO comment VALUES('{pk_id}', '{question_id}', '{answer_id}', '{message}','{datetime.now()}', '{edited_count}');".format(**content_dict)
+    elif table_name == 'tag':
+        query = f"INSERT INTO tag VALUES({"{pk_id}, {name}"});".format(**content_dict)
+    elif table_name == 'question_tag':
+        query = "INSERT INTO question_tag VALUES('{question_id}', '{answer_id}');".format(**content_dict)
+
+    cursor.execute(query)
+'''
+
+
+
+@database_common.connection_handler
+def adding_new_answer_bd(cursor, question_id, message, image, table_name='answer'):
+    current_id = get_next_id(table_name)
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO answer
+                    VALUES('{current_id}', '{current_time}', '0', '{question_id}', '{message}', '{image}');
+                    """)
+
+
+@database_common.connection_handler
+def adding_new_question_bd(cursor, title, message, image, table_name='question'):
+    current_id = get_next_id(table_name)
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO question
+                    VALUES('{current_id}', '{current_time}', '0', '0', '{title}', '{message}', '{image}');
+                    """)
+
+@database_common.connection_handler
+def adding_new_comment_to_question_bd(cursor, message, question_id, table_name='comment'):
+    current_id = get_next_id(table_name)
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO comment
+                    VALUES('{current_id}', '{question_id}', NULL , '{message}', '{current_time}', NULL);
+                    """)
+
+
+@database_common.connection_handler
+def adding_new_comment_to_answer_bd(cursor, message, answer_id, table_name='comment'):
+    current_id = get_next_id(table_name)
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO comment
+                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', NULL);
+                    """)
+
+
+@database_common.connection_handler
+def adding_new_tag_bd(cursor, new_tag, table_name='tag'):
+    current_id = get_next_id(table_name)
+    cursor.execute(f"""
+                        INSERT INTO tag
+                        VALUES('{current_id}', '{new_tag}');
+                        """)
+
+@database_common.connection_handler
+def add_tag_to_question_tag_bd(cursor, question_id, tag_id, table_name='question_tag'):
+    cursor.execute(f"""
+                        INSERT INTO {table_name}
+                        VALUES('{question_id}', '{tag_id}');
+                        """)
+
+
+
+########################################################################
+@database_common.connection_handler
+def delete_question_by_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                        DELETE FROM question 
+                        WHERE id = '{question_id}'
+                        """)
+
+
+
+
+@database_common.connection_handler
+def delete_answer_by_id_bd(cursor, question_id, answer_id):
+    cursor.execute(f"""
+                        DELETE FROM answer 
+                        WHERE id = '{answer_id}' and question_id = '{question_id}'
+                        """)
+
+
+
+
+###################################################
+
+@database_common.connection_handler
+def search_by_phrase(cursor,phrase):
+    cursor.execute(f"""
+                    SELECT DISTINCT question.id, question.submission_time, question.view_number, question.vote_number, question.title, question.message
+                    FROM question
+                    LEFT OUTER JOIN answer
+                    ON question.id=answer.question_id
+                    WHERE LOWER(CONCAT(question.title, question.message, answer.message)) 
+                    LIKE '%{phrase}%';
+                    """)
+    return cursor.fetchall()
+
+
+
+
+
+
+
