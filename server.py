@@ -3,6 +3,7 @@ import data_manager
 import util
 from pathlib import Path
 from markupsafe import Markup
+import re
 
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
 QUESTION_TABLE_HEADERS = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
@@ -40,7 +41,7 @@ def display_question_with_answers(question_id):
     try:
         image = question['image']
     except:
-        image = None
+        image = 'NULL'
     for answer in answers_data_base:
         answer['submission_time'] = answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     comments_to_question = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'comment')
@@ -81,6 +82,7 @@ def add_answer(question_id):
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
     if request.method == 'POST':
         description = request.form['description']
+        description = util.add_apostrophe(description)
         file = request.files['file']
         if file and util.allowed_file(file.filename):
             file.save(UPLOAD_FOLDER / file.filename)
@@ -95,6 +97,7 @@ def edit_answer(answer_id):
     answer_data = data_manager.get_record_by_primary_key({'id': answer_id}, 'answer')
     if request.method == 'POST':
         new_message = request.form['description']
+        new_message = util.add_apostrophe(new_message)
         file = request.files['file']
         if file:
             if util.allowed_file(file.filename):
@@ -117,6 +120,7 @@ def new_question():
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
+        description = util.add_apostrophe(description)
         file = request.files['file']
         if file and util.allowed_file(file.filename):
             file.save(UPLOAD_FOLDER / file.filename)
@@ -154,6 +158,7 @@ def edit_question(question_id):
     if request.method == 'POST':
         new_title = request.form['title']
         new_question = request.form['message']
+        new_question = util.add_apostrophe(new_question)
         file = request.files['file']
         if file:
             if util.allowed_file(file.filename):
@@ -177,6 +182,7 @@ def add_comment_to_question(question_id):
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
     if request.method == 'POST':
         comment_text = request.form['description']
+        comment_text = util.add_apostrophe(comment_text)
         data_manager.add_new_comment_to_question_record(comment_text, question_id)
         return redirect(f'/question/{question_id}')
     return render_template('add_comment_to_question.html', question=question)
@@ -187,6 +193,7 @@ def add_comment_to_answer(answer_id):
     answer = data_manager.get_record_by_primary_key({'id': answer_id}, 'answer')
     if request.method == 'POST':
         comment_text = request.form['description']
+        comment_text = util.add_apostrophe(comment_text)
         data_manager.add_new_comment_to_answer_record(comment_text, answer_id)
         question_id = answer['question_id']
         return redirect(f'/question/{question_id}')
@@ -225,6 +232,7 @@ def edit_comment(comment_id):
 
     if request.method == 'POST':
         comment_text = request.form['description']
+        comment_text = util.add_apostrophe(comment_text)
         data_manager.update_record(comment_id, {'message': comment_text}, 'comment')
         data_manager.update_comment_edited_count(comment['id'])
         return redirect(f'/question/{question["id"]}')
@@ -235,9 +243,7 @@ def edit_comment(comment_id):
 @app.route('/search')
 def search_result():
     search_phrase = request.args['search'].lower().strip()
-    print(search_phrase)
     data = data_manager.search_by_phrase(search_phrase)
-    print(data)
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
         question['message'] = Markup(question['message'].replace(search_phrase, f"<mark>{search_phrase}</mark>"))

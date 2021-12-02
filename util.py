@@ -28,3 +28,15 @@ def allowed_file(filename):
 def get_next_id(cursor, table_name):
     cursor.execute(f"""SELECT MAX(id) FROM {table_name };""")
     return cursor.fetchall()[0]['max'] + 1
+
+def add_apostrophe(message):
+    print(message)
+    my_string = ""
+    for element in message:
+        if element == "'":
+            my_string += "''"
+        else:
+            my_string += element
+    message = my_string
+    print(message)
+    return message
