@@ -170,6 +170,7 @@
                             {% if comment[0]['edited_count'] != None %}
                                 , Edited {{ comment[0]['edited_count'] }} time(s)
                             {% endif %}
+                            | <a href="/comment/{{comment[0]['id']}}/edit">Edit comment...</a>
                         </legend>
                         {{ comment[0]['message'] }}
                         </fieldset>
