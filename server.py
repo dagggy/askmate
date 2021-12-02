@@ -211,11 +211,13 @@ def edit_comment(comment_id):
 @app.route('/search')
 def search_result():
     search_phrase = request.args['search'].lower().strip()
+    print(search_phrase)
     data = data_manager.search_by_phrase(search_phrase)
+    print(data)
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-        question['message'] = Markup(question['message'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>"))
-        question['title'] = Markup(question['title'].lower().replace(search_phrase, f"<mark>{search_phrase}</mark>"))
+        question['message'] = Markup(question['message'].replace(search_phrase, f"<mark>{search_phrase}</mark>"))
+        question['title'] = Markup(question['title'].replace(search_phrase, f"<mark>{search_phrase}</mark>"))
     return render_template('list_questions.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
