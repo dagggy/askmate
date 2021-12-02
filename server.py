@@ -54,7 +54,7 @@ def display_question_with_answers(question_id):
     list_of_tags = []
     list_of_tag_id = data_manager.get_tag_id_by_question_id_bd(question_id)
     for tag_id in list_of_tag_id:
-        list_of_tags.append(data_manager.get_tag_by_tag_id_bd(tag_id['tag_id']))
+        list_of_tags.append([data_manager.get_tag_by_tag_id_bd(tag_id['tag_id']), tag_id['tag_id']])
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
@@ -218,6 +218,22 @@ def add_tag_to_question(question_id):
 
         return redirect(f'/question/{question["id"]}')
     return render_template('add_tag_to_question.html', question=question, tags=tags)
+
+
+@app.route('/question/<question_id>/tag/<tag_id>/delete_tag', methods=['GET', 'POST'])
+def remove_tag_from_question(question_id, tag_id):
+    if request.method == 'POST':
+        value = list(request.form)
+        if value == ['yes']:
+            data_manager.delete_tag_from_question(question_id, tag_id)
+            return redirect(f'/question/{question_id}')
+        else:
+            return redirect(f'/question/{question_id}')
+    elif request.method == 'GET':
+        return render_template('confirm_tag_deletion.html')
+    else:
+        return redirect('/')
+
 
 
 if __name__ == "__main__":

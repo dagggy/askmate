@@ -119,6 +119,7 @@ def get_comment_by_question_id_bd(cursor, question_id):
                             """)
     return cursor.fetchall()
 
+
 @database_common.connection_handler
 def get_comment_by_answer_id_bd(cursor, answer_id):
     cursor.execute(f"""
@@ -266,6 +267,12 @@ def delete_answer_by_id_bd(cursor, question_id, answer_id):
                         """)
 
 
+@database_common.connection_handler
+def delete_tag_from_question(cursor, question_id, tag_id):
+    cursor.execute(f"""
+                    DELETE FROM question_tag
+                    WHERE question_id = '{question_id}' and tag_id = '{tag_id}';
+    """)
 
 
 ###################################################

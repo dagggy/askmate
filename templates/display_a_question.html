@@ -32,7 +32,7 @@
                     Number of vote: {{ question['vote_number'] }} &nbsp;
                     Tags:
                     {% for tag in list_of_tags %}
-                        #{{ tag[0]['name'] }}
+                        #{{ tag[0][0]['name'] }}<sup><a href="/question/{{ question['id'] }}/tag/{{ tag[1] }}/delete_tag">x</a></sup>
                     {% endfor %}
                 </td>
             </tr>
