@@ -33,6 +33,7 @@ def list_question_page():
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
     comments_to_answer = []
+    data_manager.update_record(question_id, {'view_number': 1}, 'question')
     answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
     question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
@@ -54,8 +55,7 @@ def display_question_with_answers(question_id):
     list_of_tags = []
     list_of_tag_id = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'question_tag',  statement='tag_id')
     for tag_id in list_of_tag_id:
-        # list_of_tags.append([data_manager.get_tag_by_tag_id_bd(tag_id['tag_id']), tag_id['tag_id']])
-        list_of_tags.append(data_manager.get_records_by_foreign_key({'id': tag_id['tag_id']}, 'tag', statement='name'))
+        list_of_tags.append([data_manager.get_records_by_foreign_key({'id': tag_id['tag_id']}, 'tag', statement='name'),tag_id['tag_id']])
 
     if request.method == 'POST':
         if request.form.get('vote_answer'):
@@ -194,13 +194,13 @@ def add_comment_to_answer(answer_id):
 
 @app.route('/comment/<comment_id>/edit', methods=['GET', 'POST'])
 def edit_comment(comment_id):
-    comment = data_manager.get_comment_by_id_bd(comment_id);
-    answer = data_manager.get_record_by_primary_key(comment["answer_id"], 'answer')
-    question = data_manager.get_record_by_primary_key(comment["question_id"], 'question')
+    comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
+    answer = data_manager.get_record_by_primary_key({'answer_id': comment["answer_id"]}, 'answer')
+    question = data_manager.get_record_by_primary_key({'question_id': comment["question_id"]}, 'question')
 
     if request.method == 'POST':
         comment_text = request.form['description']
-        data_manager.edit_comment_by_id_bd(comment_id, comment_text)
+        data_manager.update_record(comment_id, {'message': comment_text}, 'comment')
         return redirect(f'/question/{question["id"]}')
 
     return render_template('edit_comment.html', comment=comment, answer=answer, question=question)
@@ -239,7 +239,7 @@ def remove_tag_from_question(question_id, tag_id):
     if request.method == 'POST':
         value = list(request.form)
         if value == ['yes']:
-            data_manager.delete_tag_from_question(question_id, tag_id['id'])
+            data_manager.delete_tag_from_question(question_id, tag_id)
             return redirect(f'/question/{question_id}')
         else:
             return redirect(f'/question/{question_id}')

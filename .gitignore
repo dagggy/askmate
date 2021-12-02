@@ -2,3 +2,6 @@
 .md
 /venv/
 .env
+.idea
+/.idea/
+/idea/
