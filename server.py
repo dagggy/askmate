@@ -196,13 +196,9 @@ def add_comment_to_answer(answer_id):
 def edit_comment(comment_id):
     comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
     if comment["answer_id"]:
-        answer = data_manager.get_record_by_primary_key({'answer_id': comment["answer_id"]}, 'comment')
-    else:
-        answer = {'message': 'Upss! It seems that this data have been lost...'}
-    if comment["question_id"]:
-        question = data_manager.get_record_by_primary_key({'question_id': comment["question_id"]}, 'comment')
-    else:
-        question = {'message': 'Upss! It seems that this data have been lost...'}
+        answer = data_manager.get_record_by_primary_key({'id': comment["answer_id"]}, 'answer')
+    if answer["question_id"]:
+        question = data_manager.get_record_by_primary_key({'id': answer["question_id"]}, 'question')
 
     if request.method == 'POST':
         comment_text = request.form['description']
