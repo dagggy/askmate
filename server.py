@@ -203,6 +203,7 @@ def edit_comment(comment_id):
     if request.method == 'POST':
         comment_text = request.form['description']
         data_manager.update_record(comment_id, {'message': comment_text}, 'comment')
+        data_manager.update_comment_edited_count(comment['id'])
         return redirect(f'/question/{question["id"]}')
 
     return render_template('edit_comment.html', comment=comment, answer=answer, question=question)

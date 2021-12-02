@@ -158,19 +158,7 @@ def get_tag_id_by_question_id_bd(cursor, question_id):
     return cursor.fetchall()
 
 
-''' Example changes_dict = {'title': 'updated title', 'vote_number': 1} '''
-@database_common.connection_handler
-def update_record(cursor, record_id, changes_dict, table_name):
-    for column_name, value in changes_dict.items():
-        if type(value) == int:
-            data_to_set = f"""{column_name} = {column_name} + {value}"""
-        else:
-            data_to_set = f"""{column_name} = '{value}'"""
-        cursor.execute(f"""
-                                UPDATE {table_name}
-                                SET {data_to_set}
-                                WHERE id = {record_id};
-                                """)
+
 
 ################################################
 
@@ -209,7 +197,7 @@ def add_new_comment_to_answer_record(cursor, message, answer_id, table_name='com
     current_time = datetime.now()
     cursor.execute(f"""
                     INSERT INTO comment
-                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', NULL);
+                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', 0);
                     """)
 
 
@@ -260,7 +248,7 @@ def delete_tag_from_question(cursor, question_id, tag_id):
 ###################################################
 
 @database_common.connection_handler
-def search_by_phrase(cursor,phrase):
+def search_by_phrase(cursor, phrase):
     cursor.execute(f"""
                     SELECT DISTINCT question.id, question.submission_time, question.view_number, question.vote_number, question.title, question.message
                     FROM question
@@ -272,6 +260,30 @@ def search_by_phrase(cursor,phrase):
     return cursor.fetchall()
 
 
+
+@database_common.connection_handler
+def update_comment_edited_count(cursor, id):
+    print(id)
+    cursor.execute(f"""
+                        UPDATE comment
+                        SET edited_count = edited_count + 1
+                        WHERE id = '{id}';
+                        """)
+
+
+''' Example changes_dict = {'title': 'updated title', 'vote_number': 1} '''
+@database_common.connection_handler
+def update_record(cursor, record_id, changes_dict, table_name):
+    for column_name, value in changes_dict.items():
+        if type(value) == int:
+            data_to_set = f"""{column_name} = {column_name} + {value}"""
+        else:
+            data_to_set = f"""{column_name} = '{value}'"""
+        cursor.execute(f"""
+                                UPDATE {table_name}
+                                SET {data_to_set}
+                                WHERE id = {record_id};
+                                """)
 
 
 
