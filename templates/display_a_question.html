@@ -165,7 +165,12 @@
                     {% for comment in comments_to_answer %}
                         {% if comment[0]['answer_id'] == answer['id'] %}
                         <fieldset>
-                        <legend> {{ comment[0]['submission_time'] }} </legend>
+                        <legend>
+                            {{ comment[0]['submission_time'] }}
+                            {% if comment[0]['edited_count'] != None %}
+                                , Edited {{ comment[0]['edited_count'] }} time(s)
+                            {% endif %}
+                        </legend>
                         {{ comment[0]['message'] }}
                         </fieldset>
                         {% endif %}

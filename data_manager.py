@@ -120,6 +120,23 @@ def get_comment_by_question_id_bd(cursor, question_id):
     return cursor.fetchall()
 
 @database_common.connection_handler
+def get_comment_by_id_bd(cursor, question_id):
+    cursor.execute(f"""
+                            SELECT *
+                            FROM comment
+                            WHERE id = '{question_id}' LIMIT 1
+                            """)
+    return cursor.fetchall()[0]
+
+@database_common.connection_handler
+def edit_comment_by_id_bd(cursor, question_id, message):
+    cursor.execute(f"""
+        UPDATE comment SET message = '{message}', submission_time = NOW(),
+        edited_count = greatest(edited_count, 0)+1 WHERE id = '{question_id}'
+        """)
+    return True
+
+@database_common.connection_handler
 def get_comment_by_answer_id_bd(cursor, answer_id):
     cursor.execute(f"""
                         SELECT *
