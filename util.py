@@ -10,6 +10,8 @@ co do poprawy:
 * search: nie wiadomo dlaczego po wyszukiwaniu całe wypełnienie tabeli wychodzi na .lower();
 * search: nie zaimplementowana część z podżwietlaniem w odpowiedziach 
 * brak zabezpieczenia w wypadkudodawania recordu o tej samej treści 
+* brak wyświetlania obrazku w opcjii "edit question"
+* nie wyświetla się więcej niż 1 komentarz do odpowiedzi
 '''
 import database_common
 import datetime
