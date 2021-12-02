@@ -239,7 +239,7 @@ def remove_tag_from_question(question_id, tag_id):
     if request.method == 'POST':
         value = list(request.form)
         if value == ['yes']:
-            data_manager.delete_tag_from_question(question_id, tag_id)
+            data_manager.delete_tag_from_question(question_id, tag_id['id'])
             return redirect(f'/question/{question_id}')
         else:
             return redirect(f'/question/{question_id}')
