@@ -1,9 +1,16 @@
+##### get_question_bd -> get_questions_data_from_db
+##### sort_data_bd  ->  get_sorted_data
+##### get_question_by_id_bd , get_answer_by_id_bd  ->  get_record_by_id
+##### update_answer_by_id_bd, update_question_by_id_bd, update_answer_by_vote_bd, update_question_by_vote_bd  ->  update_record
+#####
+
+
 from datetime import datetime
 import database_common
 
 
 @database_common.connection_handler
-def sort_data_bd(cursor, database_name, order_by, order_direction, question_id=None):
+def get_sorted_data(cursor, database_name, order_by, order_direction, question_id=None):
     if question_id != None:
         condition = f"""WHERE question_id = '{question_id}'"""
     else:
@@ -34,7 +41,7 @@ def sort_data_bd(cursor, database_name, order_by, order_direction, question_id=N
 
 
 @database_common.connection_handler
-def get_question_bd(cursor, size_limit=None):
+def get_questions_data_from_db(cursor, size_limit=None):
     if size_limit:
         condition = f"""ORDER BY submission_time DESC 
                         LIMIT '{size_limit}'"""
@@ -43,36 +50,32 @@ def get_question_bd(cursor, size_limit=None):
     cursor.execute(f"""
         SELECT *
         FROM question
-        {condition}
+        {condition};
         """)
     return cursor.fetchall()
 
 
 @database_common.connection_handler
-def get_question_by_id_bd(cursor, question_id):
+def get_record_by_id(cursor, record_id, database_name):
     cursor.execute(f"""
-        SELECT *
-        FROM question
-        WHERE id = '{question_id}'
-        """)
-    return cursor.fetchall()
-
-@database_common.connection_handler
-def get_answer_by_id_bd(cursor, answer_id):
-    cursor.execute(f"""
-        SELECT *
-        FROM answer
-        WHERE id = '{answer_id}' LIMIT 1
-        """)
+            SELECT *
+            FROM {database_name}
+            WHERE id = '{record_id}';
+            """)
     return cursor.fetchall()[0]
 
+
 @database_common.connection_handler
-def update_answer_by_id_bd(cursor, answer_id, answer):
+def update_record(cursor, record_id, value, column_name, table_name):
+    if type(value) == int:
+        data_to_set = f"""{column_name} = {column_name} + {value}"""
+    else:
+        data_to_set = f"""{column_name} = '{value}'"""
     cursor.execute(f"""
-                        UPDATE answer
-                        SET message = '{answer}'
-                        WHERE id = '{answer_id}';
-                        """)
+                            UPDATE {table_name}
+                            SET {data_to_set}
+                            WHERE id = {record_id};
+                            """)
 
 
 @database_common.connection_handler
@@ -85,19 +88,11 @@ def update_question_by_id_bd(cursor, question_id):
 
 
 @database_common.connection_handler
-def update_answer_by_vote_bd(cursor, id, add):
-    cursor.execute(f"""
-                        UPDATE answer
-                        SET vote_number = vote_number + {add}
-                        WHERE id = '{id}';
-                        """)
-
-
-@database_common.connection_handler
-def update_question_by_vote_bd(cursor, id, add):
+def update_question_by_id_bd(cursor, id, title, message, image):
+    current_time = datetime.now()
     cursor.execute(f"""
                         UPDATE question
-                        SET vote_number = vote_number + {add}
+                        SET vote_number = '0', view_number = '0', title = '{title}', message = '{message}', submission_time = '{current_time}', image = '{image}'
                         WHERE id = '{id}';
                         """)
 
@@ -153,14 +148,6 @@ def delete_question_by_id_bd(cursor, question_id):
                         """)
 
 
-@database_common.connection_handler
-def update_question_by_id_bd(cursor, id, title, message, image):
-    current_time = datetime.now()
-    cursor.execute(f"""
-                        UPDATE question
-                        SET vote_number = '0', view_number = '0', title = '{title}', message = '{message}', submission_time = '{current_time}', image = '{image}'
-                        WHERE id = '{id}';
-                        """)
 
 
 @database_common.connection_handler
