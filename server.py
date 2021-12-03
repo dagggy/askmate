@@ -3,7 +3,6 @@ import data_manager
 import util
 from pathlib import Path
 from markupsafe import Markup
-import re
 
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
 QUESTION_TABLE_HEADERS = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
@@ -18,6 +17,7 @@ def home_page():
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
+
 
 @app.route('/list', methods=['GET', 'POST'])
 def list_question_page():
@@ -223,10 +223,11 @@ def delete_comment(comment_id):
 
 
 @app.route('/comment/<comment_id>/edit', methods=['GET', 'POST'])
-def edit_comment(comment_id):
+def edit_comment_to_answer(comment_id):
     comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
     if comment["answer_id"]:
         answer = data_manager.get_record_by_primary_key({'id': comment["answer_id"]}, 'answer')
+
     if answer["question_id"]:
         question = data_manager.get_record_by_primary_key({'id': answer["question_id"]}, 'question')
 
@@ -238,6 +239,22 @@ def edit_comment(comment_id):
         return redirect(f'/question/{question["id"]}')
 
     return render_template('edit_comment.html', comment=comment, answer=answer, question=question)
+
+
+@app.route('/comment/<comment_id>/editt', methods=['GET', 'POST'])
+def edit_comment_to_question(comment_id):
+    comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
+    if comment["question_id"]:
+        question = data_manager.get_record_by_primary_key({'id': comment["question_id"]}, 'question')
+
+    if request.method == 'POST':
+        comment_text = request.form['description']
+        comment_text = util.add_apostrophe(comment_text)
+        data_manager.update_record(comment_id, {'message': comment_text}, 'comment')
+        data_manager.update_comment_edited_count(comment['id'])
+        return redirect(f'/question/{question["id"]}')
+
+    return render_template('edit_comment_to_question.html', comment=comment,  question=question)
 
 
 @app.route('/search')
@@ -281,7 +298,6 @@ def remove_tag_from_question(question_id, tag_id):
         return render_template('confirm_tag_deletion.html')
     else:
         return redirect('/')
-
 
 
 if __name__ == "__main__":

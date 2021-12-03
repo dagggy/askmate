@@ -79,8 +79,12 @@
         <h5>Comments to question:</h5>
         {% for comment in comments_to_question %}
             <fieldset>
-            <legend> {{ comment['submission_time'] }} </legend>
+            <legend> {{ comment['submission_time'] }}
+                | <a href="/comment/{{comment['id']}}/editt" name="1">Edit comment...</a>
+                | <a href="/comment/{{ comment['id'] }}/delete">Delete comment...</a>
+            </legend>
             {{ comment['message'] }}
+
             </fieldset>
         {% endfor %}
         {% endif %}
@@ -124,7 +128,7 @@
                 {% for answer in answers_base %}
                 <form method="POST">
                  <fieldset>
-                     <legend> Answer #{{ answer['id'] }}_______{{ answer['submission_time'] }} </legend>
+                     <legend> Answer #{{ answers_base.index(answer) + 1 }}_______{{ answer['submission_time'] }} </legend>
                      <p>{{ answer['message'] }}</p>
                      {% if image != None %}
                         <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image' sizes="100"></p><br>

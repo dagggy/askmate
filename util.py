@@ -30,7 +30,6 @@ def get_next_id(cursor, table_name):
     return cursor.fetchall()[0]['max'] + 1
 
 def add_apostrophe(message):
-    print(message)
     my_string = ""
     for element in message:
         if element == "'":
@@ -38,5 +37,4 @@ def add_apostrophe(message):
         else:
             my_string += element
     message = my_string
-    print(message)
     return message

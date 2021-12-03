@@ -271,7 +271,6 @@ def search_by_phrase(cursor, phrase):
 
 @database_common.connection_handler
 def update_comment_edited_count(cursor, id):
-    print(id)
     cursor.execute(f"""
                         UPDATE comment
                         SET edited_count = edited_count + 1
