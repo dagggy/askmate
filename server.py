@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, session
 import data_manager
 import util
 from pathlib import Path
@@ -307,6 +307,27 @@ def remove_tag_from_question(question_id, tag_id):
         return render_template('confirm_tag_deletion.html')
     else:
         return redirect('/')
+
+
+@app.route('/users', methods=['GET', 'POST'])
+def display_users():
+    if 'username' in session and 'user_password' in session:
+        users = data_manager.get_all_records('users')
+        return render_template('users_page.html', users=users)
+    return """
+         <table>
+        <tr>
+            <th>
+                <a href="/"><h1>Ask Mate</h1></a>
+            </th>
+            <th>
+                <h2> - crowdsourced Q&A site</h2>
+            </th>
+        </tr>
+    </table>
+    <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
+    """
+
 
 
 if __name__ == "__main__":
