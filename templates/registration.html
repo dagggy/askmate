@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
 </head>
 <body>
-<p>Welcome, Stranger!</p>
+<h1>Welcome, Stranger!</h1>
+    {% if message != '' %}
+     <p>{{ message }}</p><br>
+     {% endif %}
 
      <form action="/registration" method = 'POST'>
          <div class="container">

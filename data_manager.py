@@ -311,6 +311,12 @@ def add_new_user(cursor, email, password):
                         """)
 
 
-
+@database_common.connection_handler
+def is_email_exists(cursor, email):
+    query = f"""SELECT login FROM user_data
+            WHERE login='{email}';"""
+    cursor.execute(query)
+    email = cursor.fetchone()
+    return email is not None
 
 

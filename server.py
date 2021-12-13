@@ -29,15 +29,17 @@ def home_page():
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
-@app.route('/registration', methods=['GET' 'POST'])
+@app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    if request.method == 'GET':
-        return render_template('registration.html')
     if request.method == 'POST':
         email = request.form['email']
         password = hash.hash_password(request.form['password'])
-
+        if data_manager.is_email_exists(email):
+            return render_template('registration.html', message='Login already exists!')
+        data_manager.add_new_user(email, password)
         return redirect('/')
+    else:
+        return render_template('registration.html')
 
 
 @app.route('/list', methods=['GET', 'POST'])
