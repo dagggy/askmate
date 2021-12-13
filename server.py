@@ -5,10 +5,14 @@ from pathlib import Path
 from markupsafe import Markup
 from bonus_questions import SAMPLE_QUESTIONS
 
+
+
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
 QUESTION_TABLE_HEADERS = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
 
 app = Flask(__name__)
+#python -c 'import secrets; print(secrets.token_hex())'
+app.secret_key = '9e33e7321f59a3fdc954607f32c9da3f6b74ec0bc36828e0555de5a37987727a'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/bonus-questions")
