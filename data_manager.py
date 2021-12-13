@@ -292,12 +292,22 @@ def update_record(cursor, record_id, changes_dict, table_name):
                                 WHERE id = {record_id};
                                 """)
 ###################################
+###################################
+###################################
 @database_common.connection_handler
-def update_aaa(cursor, email):
+def get_next_user_id(cursor):
+    cursor.execute(f"""SELECT MAX(user_id) FROM user_data;""")
+    return cursor.fetchall()[0]['max'] + 1
+
+
+@database_common.connection_handler
+def add_new_user(cursor, email, password):
+    user_id = get_next_user_id()
+    user_link = f'/user/{user_id}'
+    registration_date = datetime.now()
     cursor.execute(f"""
-                        SELECT comment
-                        SET edited_count = edited_count + 1
-                        WHERE id = '{id}';
+                        INSERT INTO user_data
+                        VALUES('{user_id}', '{email}', '{password}', '{user_link}', '{registration_date}', '0', '0', '0', '0');
                         """)
 
 
