@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ask Mate | Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+</head>
+<body>
+<p>Welcome, Stranger!</p>
+
+     <form action="/registration" method = 'POST'>
+         <div class="container">
+             <label>Login : </label>
+             <input type="text" placeholder="Enter Email" name="email" required>
+             <label>Password : </label>
+             <input type="password" placeholder="Enter Password" name="password" required>
+             <button type="submit">Sign Up</button>
+         </div>
+     </form>
+ <br>
+ <br>
+ <a href="/">Go to Home</a>
+ </body>
+ </html>

@@ -86,3 +86,27 @@ mark {
   background-color: yellow;
   color: black;
 }
+.login-bnt {
+  margin: auto;
+  color: darkblue;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: lightblue;
+  border: 1px solid darkslateblue;
+  border-radius: 2px;
+  position: absolute;
+  top: 5%;
+  right: 10%
+}
+.registration-bnt {
+  margin: auto;
+  color: darkred;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: lightsalmon;
+  border: 1px solid darkgoldenrod;
+  border-radius: 2px;
+  position: absolute;
+  top: 5%;
+  right: 5%
+}

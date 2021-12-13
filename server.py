@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect
 import data_manager
 import util
+import hash
 from pathlib import Path
 from markupsafe import Markup
 from bonus_questions import SAMPLE_QUESTIONS
@@ -26,6 +27,17 @@ def home_page():
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
+
+
+@app.route('/registration', methods=['GET' 'POST'])
+def registration():
+    if request.method == 'GET':
+        return render_template('registration.html')
+    if request.method == 'POST':
+        email = request.form['email']
+        password = hash.hash_password(request.form['password'])
+
+        return redirect('/')
 
 
 @app.route('/list', methods=['GET', 'POST'])
@@ -310,7 +322,6 @@ def remove_tag_from_question(question_id, tag_id):
 
 
 if __name__ == "__main__":
-    print(data_manager.get_all_records('user_data'))
     app.run(
         host='0.0.0.0',
         port=8000,

@@ -293,7 +293,7 @@ def update_record(cursor, record_id, changes_dict, table_name):
                                 """)
 ###################################
 @database_common.connection_handler
-def update_comment_edited_count(cursor, email):
+def update_aaa(cursor, email):
     cursor.execute(f"""
                         SELECT comment
                         SET edited_count = edited_count + 1
