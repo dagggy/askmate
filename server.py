@@ -312,8 +312,9 @@ def remove_tag_from_question(question_id, tag_id):
 @app.route('/users', methods=['GET', 'POST'])
 def display_users():
     if 'username' in session and 'user_password' in session:
-        users = data_manager.get_all_records('users')
-        return render_template('users_page.html', users=users)
+        users = data_manager.get_users_records()
+        headers = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
+        return render_template('users_page.html', users=users, headers=headers)
     return """
          <table>
         <tr>
