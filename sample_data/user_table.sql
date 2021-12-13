@@ -1,7 +1,9 @@
-ALTER TABLE IF EXISTS ONLY public.user DROP CONSTRAINT IF EXISTS pk_user_id CASCADE;
 
 DROP TABLE IF EXISTS public.user;
-CREATE TABLE public.user (
+ALTER TABLE IF EXISTS ONLY public.user_data DROP CONSTRAINT IF EXISTS pk_user_id CASCADE;
+
+DROP TABLE IF EXISTS public.user_data;
+CREATE TABLE public.user_data (
     user_id serial NOT NULL,
     login text,
     password text,
@@ -13,4 +15,4 @@ CREATE TABLE public.user (
     user_reputation integer
 );
 
-INSERT INTO public.user VALUES (1, 'user1@gmai.com', '$2b$12$p3dQ4fBedKSzzYpzjPDDLuHS5TJUJ1oTl6OAFinNkETgPGreIa/YW',NULL, '2017-04-28 08:29:00', 2, 7, 1, 5);
+INSERT INTO public.user_data VALUES (1, 'user1@gmai.com', '$2b$12$p3dQ4fBedKSzzYpzjPDDLuHS5TJUJ1oTl6OAFinNkETgPGreIa/YW',NULL, '2017-04-28 08:29:00', 2, 7, 1, 5);

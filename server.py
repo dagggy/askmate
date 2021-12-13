@@ -310,6 +310,7 @@ def remove_tag_from_question(question_id, tag_id):
 
 
 if __name__ == "__main__":
+    print(data_manager.get_all_records('user_data'))
     app.run(
         host='0.0.0.0',
         port=8000,
