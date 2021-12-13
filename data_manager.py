@@ -292,8 +292,31 @@ def update_record(cursor, record_id, changes_dict, table_name):
                                 WHERE id = {record_id};
                                 """)
 ###################################
+###################################
+###################################
+@database_common.connection_handler
+def get_next_user_id(cursor):
+    cursor.execute(f"""SELECT MAX(user_id) FROM user_data;""")
+    return cursor.fetchall()[0]['max'] + 1
 
 
+@database_common.connection_handler
+def add_new_user(cursor, email, password):
+    user_id = get_next_user_id()
+    user_link = f'/user/{user_id}'
+    registration_date = datetime.now()
+    cursor.execute(f"""
+                        INSERT INTO user_data
+                        VALUES('{user_id}', '{email}', '{password}', '{user_link}', '{registration_date}', '0', '0', '0', '0');
+                        """)
 
+
+@database_common.connection_handler
+def is_email_exists(cursor, email):
+    query = f"""SELECT login FROM user_data
+            WHERE login='{email}';"""
+    cursor.execute(query)
+    email = cursor.fetchone()
+    return email is not None
 
 

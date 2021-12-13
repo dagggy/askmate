@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, session
 import data_manager
 import util
+import hash
 from pathlib import Path
 from markupsafe import Markup
 from bonus_questions import SAMPLE_QUESTIONS
@@ -26,6 +27,19 @@ def home_page():
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
+
+
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = hash.hash_password(request.form['password'])
+        if data_manager.is_email_exists(email):
+            return render_template('registration.html', message='Login already exists!')
+        data_manager.add_new_user(email, password)
+        return redirect('/')
+    else:
+        return render_template('registration.html')
 
 
 @app.route('/list', methods=['GET', 'POST'])
