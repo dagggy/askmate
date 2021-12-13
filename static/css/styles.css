@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+
+img.btn {
+  opacity: 0.6;
+  border-bottom: 4px solid white;
+  cursor: pointer;
+}
+img.btn:hover {
+  opacity: 1;
+  border-bottom: 4px solid #DDDDFF;
+}
+
+/* Style the search field */
+form.search input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 80%;
+  background: lavenderblush;
+}
+
+/* Style the submit button */
+form.search button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: lightcoral;
+  color: white;
+  font-size: 17px;
+  border: 1px solid firebrick;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+
+form.search button:hover {
+  background: firebrick;
+  color: antiquewhite;
+}
+
+/* Clear floats */
+form.search::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.press_button {
+  background: antiquewhite;
+  color: firebrick;
+  font-size: 13px;
+  border: 1px solid lightgrey;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.press_button :hover {
+  background: firebrick;
+  color: antiquewhite;
+  font-size: 15px;
+  border: 0px solid lightgrey;
+  border-radius: 2px;
+}
+.questions_table {
+  background-color: beige;
+}
+
+.table_headers {
+  background-color: blanchedalmond;
+}
+table.questions_table  {
+  border-collapse: collapse;
+}
+table.questions_table  td, table.questions_table  th {
+  border: 1px solid lightcoral;
+}
+.marquee {
+  font-size: 15px;
+  font-weight: bold;
+  color: black;
+  border:3px solid lightcoral;
+  background-color: antiquewhite;
+  direction: ltr;
+}
+mark {
+  background-color: yellow;
+  color: black;
+}
