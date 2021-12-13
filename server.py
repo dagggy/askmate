@@ -331,7 +331,6 @@ def display_users():
 
 
 if __name__ == "__main__":
-    print(data_manager.get_all_records('user_data'))
     app.run(
         host='0.0.0.0',
         port=8000,
