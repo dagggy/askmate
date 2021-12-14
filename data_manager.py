@@ -316,7 +316,7 @@ def add_new_user(cursor, email, password):
     registration_date = datetime.now()
     cursor.execute(f"""
                         INSERT INTO user_data
-                        VALUES('{id}', '{email}', '{password}', '{user_link}', '{registration_date}', '0', '0', '0', '0');
+                        VALUES('{user_id}', '{email}', '{password}', '{user_link}', '{registration_date}', '0', '0', '0', '0');
                         """)
 
 
