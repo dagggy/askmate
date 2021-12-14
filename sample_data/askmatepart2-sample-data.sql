@@ -6,15 +6,19 @@
 -- Dumped by pg_dump version 9.5.6
 
 ALTER TABLE IF EXISTS ONLY public.question DROP CONSTRAINT IF EXISTS pk_question_id CASCADE;
+ALTER TABLE IF EXISTS ONLY public.question DROP CONSTRAINT IF EXISTS fk_user_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.answer DROP CONSTRAINT IF EXISTS pk_answer_id CASCADE;
+ALTER TABLE IF EXISTS ONLY public.answer DROP CONSTRAINT IF EXISTS fk_user_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.answer DROP CONSTRAINT IF EXISTS fk_question_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.comment DROP CONSTRAINT IF EXISTS pk_comment_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.comment DROP CONSTRAINT IF EXISTS fk_question_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.comment DROP CONSTRAINT IF EXISTS fk_answer_id CASCADE;
+ALTER TABLE IF EXISTS ONLY public.comment DROP CONSTRAINT IF EXISTS fk_user_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.question_tag DROP CONSTRAINT IF EXISTS pk_question_tag_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.question_tag DROP CONSTRAINT IF EXISTS fk_question_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.tag DROP CONSTRAINT IF EXISTS pk_tag_id CASCADE;
 ALTER TABLE IF EXISTS ONLY public.question_tag DROP CONSTRAINT IF EXISTS fk_tag_id CASCADE;
+ALTER TABLE IF EXISTS ONLY public.user_data DROP CONSTRAINT IF EXISTS pk_user_id CASCADE;
 
 DROP TABLE IF EXISTS public.question;
 CREATE TABLE question (
@@ -63,6 +67,21 @@ CREATE TABLE tag (
     name text
 );
 
+DROP TABLE IF EXISTS public.user;
+DROP TABLE IF EXISTS public.user_data;
+CREATE TABLE public.user_data (
+    id serial NOT NULL,
+    login text,
+    password text,
+    username_link text,
+    registration_date timestamp without time zone,
+    questions_number integer,
+    answers_number integer,
+    comments_number integer,
+    user_reputation integer
+);
+
+INSERT INTO public.user_data VALUES (1, 'user1@gmai.com', '$2b$12$p3dQ4fBedKSzzYpzjPDDLuHS5TJUJ1oTl6OAFinNkETgPGreIa/YW',NULL, '2017-04-28 08:29:00', 2, 7, 1, 5);
 
 ALTER TABLE ONLY answer
     ADD CONSTRAINT pk_answer_id PRIMARY KEY (id);
@@ -79,11 +98,23 @@ ALTER TABLE ONLY question_tag
 ALTER TABLE ONLY tag
     ADD CONSTRAINT pk_tag_id PRIMARY KEY (id);
 
+ALTER TABLE ONLY user_data
+    ADD CONSTRAINT pk_user_id PRIMARY KEY (id);
+
+ALTER TABLE ONLY question
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user_data(id);
+
 ALTER TABLE ONLY comment
     ADD CONSTRAINT fk_answer_id FOREIGN KEY (answer_id) REFERENCES answer(id);
 
+ALTER TABLE ONLY comment
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user_data(id);
+
 ALTER TABLE ONLY answer
     ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES question(id);
+
+ALTER TABLE ONLY answer
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user_data(id);
 
 ALTER TABLE ONLY question_tag
     ADD CONSTRAINT fk_question_id FOREIGN KEY (question_id) REFERENCES question(id);
