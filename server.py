@@ -337,7 +337,7 @@ def registration():
 
 @app.route('/users', methods=['GET', 'POST'])
 def display_users():
-    if 'username' in session and 'user_password' in session:
+    if flask_login.current_user.is_authenticated:
         users = data_manager.get_users_records()
         headers = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
         return render_template('users_page.html', users=users, headers=headers)
