@@ -17,12 +17,20 @@
      </tr>
         {% for user in users %}
             <tr>{% for key, value in user.items() %}
-                <td style="background-color: beige">{% if key == 'login' %}
-                    {% set value = value.split('@')[0] %}
-                    <a href="/user/{{ user['id'] }}">{{ value }}</a>
-                {% else %}
-                    {{ value }}
-                {% endif %}</td>
+                {% if key != 'id' %}
+                <td style="background-color: beige">
+                    {% if key == 'login' %}
+                        {% set value = value.split('@')[0] %}
+                        {% if  user['id'] == current_user.db_id%}
+                            <a href="/user/{{ user['id'] }}">{{ value }}</a>
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                {% endif %}
+                </td>
             {% endfor %}</tr>
         {% endfor %}
      </table>

@@ -345,6 +345,7 @@ def registration():
 
 
 @app.route('/users', methods=['GET', 'POST'])
+@flask_login.login_required
 def display_users():
     if flask_login.current_user.is_authenticated:
         users = data_manager.get_users_records()
@@ -366,6 +367,11 @@ def login():
             flask_login.login_user(user)
             return redirect(url_for('protected'))
     return redirect('/login')
+
+
+@app.route('/user/<user_id>', methods=['GET', 'POST'])
+def user_account(user_id):
+    return 'ok'
 
 
 @app.route('/protected')
