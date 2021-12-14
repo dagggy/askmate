@@ -56,10 +56,13 @@
                     <input type="hidden" id="down" name="vote" value="-1">
                 </form></td>
             </tr>
-
+            {% if current_user.is_authenticated %}
             <tr><a href="/question/{{ question['id'] }}/edit_page"> <input type="button" value="Edit Question"> </a></tr>
+            {% endif %}
         </table>
+      {% if current_user.is_authenticated %}
         <form action="/question/{{ question['id'] }}/new_comment" method="POST">
+
                  <p>
                      Press the button to add a comment:
                      <a href="/question/{{ question['id'] }}/new_comment">
@@ -67,6 +70,7 @@
                      </a>
                  </p>
             </form>
+
             <form action="/question/{{ question['id'] }}/new_tag" method="POST">
                  <p>
                      To add tag press this button:
@@ -75,6 +79,7 @@
                      </a>
                  </p>
             </form>
+      {% endif %}
       {% if number_of_comments_to_question > 0 %}
         <h5>Comments to question:</h5>
         {% for comment in comments_to_question %}
@@ -89,6 +94,7 @@
         {% endfor %}
         {% endif %}
         <div>
+        {% if current_user.is_authenticated %}
             <form action="/question/{{ question['id'] }}" method="POST">
                  <p>
                      If you want to add an answer, please, press the button:
@@ -101,6 +107,7 @@
                 To delete the question, press here!
                 <input type='submit' value='Delete'>
             </form>
+        {% endif %}
             <form method="GET">
                 <table>
                     <tr>
@@ -150,6 +157,7 @@
                              </form>
                          </td>
                      </table>
+                 {% if current_user.is_authenticated %}
                 <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
                     <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">
                         <img class="btn" title="Delete this answer" src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
@@ -164,6 +172,7 @@
                      </a>
                  </p>
             </form>
+                 {% endif %}
                  {% if number_of_comments_to_answer > 0 %}
                     <h5>Comments to answer:</h5>
                     {% for comment in comments_to_answer[0] %}
@@ -174,8 +183,10 @@
                             {% if comment['edited_count'] != None %}
                                 , Edited {{ comment['edited_count'] }} time(s)
                             {% endif %}
+                        {% if current_user.is_authenticated %}
                             | <a href="/comment/{{comment['id']}}/edit">Edit comment...</a>
                             | <a href="/comment/{{ comment['id'] }}/delete">Delete comment...</a>
+                        {% endif %}
                         </legend>
                         {{ comment['message'] }}
                         </fieldset>
