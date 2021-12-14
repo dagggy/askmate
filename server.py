@@ -330,9 +330,13 @@ def remove_tag_from_question(question_id, tag_id):
 def registration():
     if request.method == 'POST':
         email = request.form['email']
-        password = hash.hash_password(request.form['password'])
         if data_manager.is_email_exists(email):
-            return render_template('registration.html', message='Login already exists!')
+            return '''<h1>Login already exists!</h1><br>
+    <form action='/registration'>
+        <button>Back to registration page</button>
+    </form>
+    '''
+        password = hash.hash_password(request.form['password'])
         data_manager.add_new_user(email, password)
         return redirect('/')
     else:
