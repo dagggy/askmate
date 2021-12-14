@@ -135,7 +135,7 @@
                 {% for answer in answers_base %}
                 <form method="POST">
                  <fieldset>
-                     <legend> Answer #{{ answers_base.index(answer) + 1 }}_______{{ answer['submission_time'] }} </legend>
+                     <legend> Answer #{{ answers_base.index(answer) + 1 }}_______{{ answer['submission_time'] }}____<button type="submit" value="Accept_answer">Accept this answer</button> </legend>
                      <p>{{ answer['message'] }}</p>
                      {% if image != None %}
                         <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image' sizes="100"></p><br>
