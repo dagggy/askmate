@@ -29,7 +29,8 @@ CREATE TABLE question (
     title text,
     message text,
     image text,
-    user_id integer
+    user_id integer,
+    accepted_answer integer
 );
 
 DROP TABLE IF EXISTS public.answer;

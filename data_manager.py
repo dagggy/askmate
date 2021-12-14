@@ -243,6 +243,14 @@ def add_tag_to_question_tag_bd(cursor, question_id, tag_id, table_name='question
                         """)
 
 
+@database_common.connection_handler
+def add_accepted_answer_to_question_bd(cursor, answer_id, question_id):
+    cursor.execute(f"""
+                        UPDATE question
+                        SET accepted_answer = {answer_id}
+                        WHERE id = {question_id}
+                        """)
+
 
 ########################################################################
 @database_common.connection_handler

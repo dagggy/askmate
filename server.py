@@ -48,6 +48,7 @@ def list_question_page():
 
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
+
     comments_to_answer = []
     data_manager.update_record(question_id, {'view_number': 1}, 'question')
     answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
@@ -89,7 +90,30 @@ def display_question_with_answers(question_id):
         category = request.args.get('by_category')
         order = request.args.get('by_order')
         answers_data_base = data_manager.get_sorted_data('answer', category, order, question_id)
-    return render_template('display_a_question.html', question=question, image=image, number_of_comments_to_answer=number_of_comments_to_answer, answers_base=answers_data_base, comments_to_answer=comments_to_answer, comments_to_question=comments_to_question, number_of_comments_to_question=number_of_comments_to_question, list_of_tags=list_of_tags)
+
+    accept_answer = False
+    if flask_login.current_user.is_authenticated:
+        user_login_in_session = flask_login.current_user.email
+        users = data_manager.get_all_records('user_data')
+        for realdict in users:
+            if user_login_in_session == realdict['login'] and realdict['id'] == question['user_id']:
+                accept_answer = True
+    if request.form.get('accept_answer'):
+        answer_id = request.form.get('accept_answer')
+        data_manager.add_accepted_answer_to_question_bd(answer_id, question_id)
+    if request.form.get('not_accept_answer'):
+        data_manager.add_accepted_answer_to_question_bd("NULL", question_id)
+    question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
+
+    return render_template('display_a_question.html',
+                           question=question,
+                           image=image,
+                           number_of_comments_to_answer=number_of_comments_to_answer,
+                           answers_base=answers_data_base, comments_to_answer=comments_to_answer,
+                           comments_to_question=comments_to_question,
+                           number_of_comments_to_question=number_of_comments_to_question,
+                           list_of_tags=list_of_tags,
+                           accept_answer=accept_answer)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
