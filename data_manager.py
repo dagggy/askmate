@@ -78,6 +78,14 @@ def get_all_records(cursor, table_name):
         """)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def get_users_records(cursor):
+    cursor.execute(f"""
+        SELECT login, registration_date, questions_number, answers_number, comments_number, user_reputation
+        FROM user_data
+        """)
+    return cursor.fetchall()
 ##############################################
 @database_common.connection_handler
 def get_next_id(cursor, table_name):

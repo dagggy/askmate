@@ -332,8 +332,7 @@ def display_users():
         return render_template('users_page.html', users=users, headers=headers)
     return """
          <table>
-        <tr>
-            <th>
+        <tr><th>
                 <a href="/"><h1>Ask Mate</h1></a>
             </th>
             <th>
