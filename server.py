@@ -29,19 +29,6 @@ def home_page():
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
-@app.route('/registration', methods=['GET', 'POST'])
-def registration():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = hash.hash_password(request.form['password'])
-        if data_manager.is_email_exists(email):
-            return render_template('registration.html', message='Login already exists!')
-        data_manager.add_new_user(email, password)
-        return redirect('/')
-    else:
-        return render_template('registration.html')
-
-
 @app.route('/list', methods=['GET', 'POST'])
 def list_question_page():
     data = data_manager.get_sorted_data('question')
@@ -321,6 +308,20 @@ def remove_tag_from_question(question_id, tag_id):
         return render_template('confirm_tag_deletion.html')
     else:
         return redirect('/')
+
+
+################Sprint_3########
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = hash.hash_password(request.form['password'])
+        if data_manager.is_email_exists(email):
+            return render_template('registration.html', message='Login already exists!')
+        data_manager.add_new_user(email, password)
+        return redirect('/')
+    else:
+        return render_template('registration.html')
 
 
 @app.route('/users', methods=['GET', 'POST'])
