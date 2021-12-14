@@ -175,44 +175,55 @@ def get_password_by_email(cursor, email):
     return cursor.fetchone()
 
 
+@database_common.connection_handler
+def get_user_id_by_email(cursor, email):
+    cursor.execute(f"""
+                        SELECT id
+                        FROM user_data
+                        WHERE login = '{email}'
+    """)
+    return cursor.fetchone()
+
+
 ################################################
 
 @database_common.connection_handler
-def add_new_answer_record(cursor, question_id, message, image, table_name='answer'):
+def add_new_answer_record(cursor, question_id, message, image, user_id, table_name='answer'):
     current_id = get_next_id(table_name)
     current_time = datetime.now()
     cursor.execute(f"""
                     INSERT INTO answer
-                    VALUES('{current_id}', '{current_time}', '0', '{question_id}', '{message}', '{image}');
+                    VALUES('{current_id}', '{current_time}', '0', '{question_id}', '{message}', '{image}', {user_id});
                     """)
 
 
 @database_common.connection_handler
-def add_new_question_record(cursor, title, message, image, table_name='question'):
+def add_new_question_record(cursor, title, message, image, user_id, table_name='question'):
     current_id = get_next_id(table_name)
     current_time = datetime.now()
     cursor.execute(f"""
                     INSERT INTO question
-                    VALUES('{current_id}', '{current_time}', '0', '0', '{title}', '{message}', '{image}');
-                    """)
-
-@database_common.connection_handler
-def add_new_comment_to_question_record(cursor, message, question_id, table_name='comment'):
-    current_id = get_next_id(table_name)
-    current_time = datetime.now()
-    cursor.execute(f"""
-                    INSERT INTO comment
-                    VALUES('{current_id}', '{question_id}', NULL , '{message}', '{current_time}', NULL);
+                    VALUES('{current_id}', '{current_time}', '0', '0', '{title}', '{message}', '{image}', '{user_id}');
                     """)
 
 
 @database_common.connection_handler
-def add_new_comment_to_answer_record(cursor, message, answer_id, table_name='comment'):
+def add_new_comment_to_question_record(cursor, message, question_id, user_id, table_name='comment'):
     current_id = get_next_id(table_name)
     current_time = datetime.now()
     cursor.execute(f"""
                     INSERT INTO comment
-                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', 0);
+                    VALUES('{current_id}', '{question_id}', NULL , '{message}', '{current_time}', NULL, '{user_id}');
+                    """)
+
+
+@database_common.connection_handler
+def add_new_comment_to_answer_record(cursor, message, answer_id, user_id, table_name='comment'):
+    current_id = get_next_id(table_name)
+    current_time = datetime.now()
+    cursor.execute(f"""
+                    INSERT INTO comment
+                    VALUES('{current_id}', NULL ,'{answer_id}', '{message}', '{current_time}', 0, '{user_id}');
                     """)
 
 

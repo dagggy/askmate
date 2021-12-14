@@ -101,7 +101,8 @@ def add_answer(question_id):
         file = request.files['file']
         if file and util.allowed_file(file.filename):
             file.save(UPLOAD_FOLDER / file.filename)
-        data_manager.add_new_answer_record(question_id, description, file.filename)
+        data_manager.add_new_answer_record(question_id, description, file.filename,
+                                           data_manager.get_user_id_by_email(flask_login.current_user.id))
         return redirect(f'/question/{question_id}')
     elif request.method == 'GET':
         return render_template('upload_answer.html', question_id=question['id'])
@@ -140,7 +141,8 @@ def new_question():
         file = request.files['file']
         if file and util.allowed_file(file.filename):
             file.save(UPLOAD_FOLDER / file.filename)
-        data_manager.add_new_question_record(title, description, file.filename)
+        data_manager.add_new_question_record(title, description, file.filename,
+                                             data_manager.get_user_id_by_email(flask_login.current_user.id))
         return redirect('/')
     elif request.method == 'GET':
         return render_template('upload_question.html')
@@ -202,7 +204,8 @@ def add_comment_to_question(question_id):
     if request.method == 'POST':
         comment_text = request.form['description']
         comment_text = util.add_apostrophe(comment_text)
-        data_manager.add_new_comment_to_question_record(comment_text, question_id)
+        data_manager.add_new_comment_to_question_record(comment_text, question_id,
+                                                        data_manager.get_user_id_by_email(flask_login.current_user.id))
         return redirect(f'/question/{question_id}')
     return render_template('add_comment_to_question.html', question=question)
 
@@ -214,7 +217,8 @@ def add_comment_to_answer(answer_id):
     if request.method == 'POST':
         comment_text = request.form['description']
         comment_text = util.add_apostrophe(comment_text)
-        data_manager.add_new_comment_to_answer_record(comment_text, answer_id)
+        data_manager.add_new_comment_to_answer_record(comment_text, answer_id,
+                                                      data_manager.get_user_id_by_email(flask_login.current_user.id))
         question_id = answer['question_id']
         return redirect(f'/question/{question_id}')
     return render_template('add_comment_to_answer.html', answer=answer)
