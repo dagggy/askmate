@@ -105,6 +105,7 @@ def display_question_with_answers(question_id):
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
+@flask_login.login_required
 def add_answer(question_id):
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
     if request.method == 'POST':
@@ -143,6 +144,7 @@ def edit_answer(answer_id):
 
 
 @app.route('/add_question', methods=['POST', 'GET'])
+@flask_login.login_required
 def new_question():
     if request.method == 'POST':
         title = request.form['title']
@@ -158,6 +160,7 @@ def new_question():
 
 
 @app.route('/question/<question_id>/delete', methods=['POST', 'GET'])
+@flask_login.login_required
 def delete_question(question_id):
     if request.method == 'POST':
         data_manager.delete_question_by_id_bd(question_id)
@@ -167,6 +170,7 @@ def delete_question(question_id):
 
 
 @app.route('/question/<question_id>/<answer_id>/delete', methods=['GET', 'POST'])
+@flask_login.login_required
 def delete_answer(question_id, answer_id):
     if request.method == 'POST':
         value = list(request.form)
@@ -205,6 +209,7 @@ def edit_question(question_id):
 
 
 @app.route('/question/<question_id>/new_comment', methods=['GET', 'POST'])
+@flask_login.login_required
 def add_comment_to_question(question_id):
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
     if request.method == 'POST':
@@ -216,6 +221,7 @@ def add_comment_to_question(question_id):
 
 
 @app.route('/answer/<answer_id>/new-comment', methods=['GET', 'POST'])
+@flask_login.login_required
 def add_comment_to_answer(answer_id):
     answer = data_manager.get_record_by_primary_key({'id': answer_id}, 'answer')
     if request.method == 'POST':
@@ -228,6 +234,7 @@ def add_comment_to_answer(answer_id):
 
 
 @app.route('/comment/<comment_id>/delete', methods=['GET', 'POST'])
+@flask_login.login_required
 def delete_comment(comment_id):
     comment = data_manager.get_record_by_primary_key({'id': comment_id}, 'comment')
     if request.method == 'POST':
@@ -379,7 +386,11 @@ def logout():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return 'Unauthorized'
+    return '''<h1>Unauthorized</h1><br>
+    <form action='/'>
+        <button>Back to the main page</button>
+    </form>
+    '''
 
 
 class User(flask_login.UserMixin):
