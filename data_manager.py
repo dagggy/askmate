@@ -147,7 +147,6 @@ def get_tag_id_by_tag_bd(cursor, tag):
     return cursor.fetchall()
 
 
-
 @database_common.connection_handler
 def get_tag_id_by_question_id_bd(cursor, question_id):
     cursor.execute(f"""
@@ -158,6 +157,14 @@ def get_tag_id_by_question_id_bd(cursor, question_id):
     return cursor.fetchall()
 
 
+@database_common.connection_handler
+def get_password_by_email(cursor, email):
+    cursor.execute(f"""
+                        SELECT password
+                        FROM user_data
+                        WHERE login = '{email}'
+    """)
+    return cursor.fetchone()
 
 
 ################################################

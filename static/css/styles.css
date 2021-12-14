@@ -110,6 +110,26 @@ mark {
   top: 5%;
   right: 5%
 }
+.logout-btn {
+  margin: auto;
+  color: lightgreen;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: darkgreen;
+  border: 1px solid forestgreen;
+  border-radius: 2px;
+  position: absolute;
+  top: 5%;
+  right: 5%
+}
+.user-text{
+  margin: auto;
+  font-weight: bold;
+  font-size: 15px;
+  position: absolute;
+  top: 3%;
+  right: 5%
+}
 .userList {
   font-size: 15px;
   font-family: "Arial Hebrew Scholar";
