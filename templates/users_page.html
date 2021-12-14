@@ -19,7 +19,7 @@
             <tr>{% for key, value in user.items() %}
                 <td style="background-color: beige">{% if key == 'login' %}
                     {% set value = value.split('@')[0] %}
-                    {{ value }}
+                    <a href="/user/{{ user['user_id'] }}">{{ value }}</a>
                 {% else %}
                     {{ value }}
                 {% endif %}</td>

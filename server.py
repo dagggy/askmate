@@ -330,16 +330,10 @@ def display_users():
         headers = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
         return render_template('users_page.html', users=users, headers=headers)
     return """
-         <table>
-        <tr>
-            <th>
-                <a href="/"><h1>Ask Mate</h1></a>
-            </th>
-            <th>
-                <h2> - crowdsourced Q&A site</h2>
-            </th>
-        </tr>
-    </table>
+         <table><tr>
+            <th><a href="/"><h1>Ask Mate</h1></a></th>
+            <th><h2> - crowdsourced Q&A site</h2></th>
+         </tr></table>
     <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
     """
 
