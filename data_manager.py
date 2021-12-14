@@ -309,7 +309,6 @@ def update_record(cursor, record_id, changes_dict, table_name):
 ###################################
 ###################################
 ###################################
-
 @database_common.connection_handler
 def add_new_user(cursor, email, password):
     user_id = get_next_id('user_data')
