@@ -33,19 +33,6 @@ def home_page():
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
-@app.route('/registration', methods=['GET', 'POST'])
-def registration():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = hash.hash_password(request.form['password'])
-        if data_manager.is_email_exists(email):
-            return render_template('registration.html', message='Login already exists!')
-        data_manager.add_new_user(email, password)
-        return redirect('/')
-    else:
-        return render_template('registration.html')
-
-
 @app.route('/list', methods=['GET', 'POST'])
 def list_question_page():
     data = data_manager.get_sorted_data('question')
@@ -334,6 +321,20 @@ def remove_tag_from_question(question_id, tag_id):
         return redirect('/')
 
 
+################Sprint_3########
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = hash.hash_password(request.form['password'])
+        if data_manager.is_email_exists(email):
+            return render_template('registration.html', message='Login already exists!')
+        data_manager.add_new_user(email, password)
+        return redirect('/')
+    else:
+        return render_template('registration.html')
+
+
 @app.route('/users', methods=['GET', 'POST'])
 def display_users():
     if 'username' in session and 'user_password' in session:
@@ -341,16 +342,10 @@ def display_users():
         headers = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
         return render_template('users_page.html', users=users, headers=headers)
     return """
-         <table>
-        <tr>
-            <th>
-                <a href="/"><h1>Ask Mate</h1></a>
-            </th>
-            <th>
-                <h2> - crowdsourced Q&A site</h2>
-            </th>
-        </tr>
-    </table>
+         <table><tr>
+            <th><a href="/"><h1>Ask Mate</h1></a></th>
+            <th><h2> - crowdsourced Q&A site</h2></th>
+         </tr></table>
     <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
     """
 
