@@ -14,7 +14,7 @@
                   <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
                   <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
               {% else %}
-                  <th class="user-text">Currently logged as: {{ (current_user.id).split('@')[0] }}</th>
+                  <th class="user-text">Currently logged as: {{ (current_user.email).split('@')[0] }}</th>
                   <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
               {% endif %}
           </tr>
