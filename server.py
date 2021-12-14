@@ -1,11 +1,11 @@
-from flask import Flask, request, render_template, redirect, session
+from flask import Flask, request, render_template, redirect, session, url_for
 import data_manager
 import util
 import hash
 from pathlib import Path
 from markupsafe import Markup
 from bonus_questions import SAMPLE_QUESTIONS
-
+import flask_login
 
 
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
@@ -15,6 +15,10 @@ app = Flask(__name__)
 #python -c 'import secrets; print(secrets.token_hex())'
 app.secret_key = '9e33e7321f59a3fdc954607f32c9da3f6b74ec0bc36828e0555de5a37987727a'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
 
 @app.route("/bonus-questions")
 def main():
@@ -343,6 +347,65 @@ def display_users():
     <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
     """
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    email = request.form['email']
+    if data_manager.is_email_exists(email):
+        if hash.verify_password(request.form['password'], dict(data_manager.get_password_by_email(email))['password']):
+            user = User()
+            user.id = email
+            flask_login.login_user(user)
+            return redirect(url_for('protected'))
+    return redirect('/login')
+
+
+@app.route('/protected')
+@flask_login.login_required
+def protected():
+    print(f'user {flask_login.current_user.id} has logged in')
+    return redirect('/')
+
+
+@app.route('/logout')
+@flask_login.login_required
+def logout():
+    print(f'user {flask_login.current_user.id} logged out')
+    flask_login.logout_user()
+    return redirect('/')
+
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return 'Unauthorized'
+
+
+class User(flask_login.UserMixin):
+    pass
+
+
+@login_manager.user_loader
+def user_loader(email):
+    if not data_manager.is_email_exists(email):
+        return
+    user = User()
+    user.id = email
+    return user
+
+
+@login_manager.request_loader
+def request_loader(request):
+    email = request.form.get('email')
+    if not data_manager.is_email_exists(email):
+        return
+
+    user = User()
+    user.id = email
+
+    user.is_authenticated = hash.verify_password(request.form['password'], data_manager.get_password_by_email(email))
+    return user
 
 
 if __name__ == "__main__":

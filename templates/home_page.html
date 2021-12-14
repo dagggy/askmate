@@ -10,8 +10,13 @@
           <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
               <th><h2> - crowdsourced Q&A site</h2></th>
               <a href="/users" class="userList"><h3>USERS LIST</h3></a>
-              <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
-              <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
+              {% if not current_user.is_authenticated %}
+                  <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
+                  <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
+              {% else %}
+                  <th class="user-text">Currently logged in: {{ current_user.id }}</th>
+                  <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
+              {% endif %}
           </tr>
       </table>
        <marquee class="marquee">
