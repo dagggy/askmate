@@ -7,16 +7,18 @@
 </head>
 <body>
       <table>
-        <tr>
-            <th>
-                <a href="/"><h1>Ask Mate</h1></a>
-            </th>
-            <th>
-                <h2> - crowdsourced Q&A site</h2>
-            </th>
-            <a href="/users" style="float:right;text-align:right;"><h3>USERS LIST</h3></a>
-        </tr>
-    </table>
+          <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
+              <th><h2> - crowdsourced Q&A site</h2></th>
+              <a href="/users" class="userList"><h3>USERS LIST</h3></a>
+              {% if not current_user.is_authenticated %}
+                  <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
+                  <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
+              {% else %}
+                  <th class="user-text">Currently logged as: {{ (current_user.id).split('@')[0] }}</th>
+                  <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
+              {% endif %}
+          </tr>
+      </table>
       <form class="search" action="/search" method="GET">
           <input type="text" placeholder="Search..." name="search">
           <button type="submit">Search</button>

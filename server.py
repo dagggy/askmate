@@ -7,9 +7,10 @@ from markupsafe import Markup
 from bonus_questions import SAMPLE_QUESTIONS
 import flask_login
 
-
+BACK_TO_HOME = """<table><tr><th><a href="/"><h1>Ask Mate</h1></a></th><th><h2> - crowdsourced Q&A site</h2></th></tr></table>"""
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
 QUESTION_TABLE_HEADERS = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
+USER_TABLE_HEADERS = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
 
 app = Flask(__name__)
 #python -c 'import secrets; print(secrets.token_hex())'
@@ -331,7 +332,7 @@ def registration():
     if request.method == 'POST':
         email = request.form['email']
         if data_manager.is_email_exists(email):
-            return '''<h1>Login already exists!</h1><br>
+            return BACK_TO_HOME + '''<h1>Login already exists!</h1><br>
     <form action='/registration'>
         <button>Back to registration page</button>
     </form>
@@ -347,13 +348,8 @@ def registration():
 def display_users():
     if flask_login.current_user.is_authenticated:
         users = data_manager.get_users_records()
-        headers = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
-        return render_template('users_page.html', users=users, headers=headers)
-    return """
-         <table><tr>
-            <th><a href="/"><h1>Ask Mate</h1></a></th>
-            <th><h2> - crowdsourced Q&A site</h2></th>
-         </tr></table>
+        return render_template('users_page.html', users=users, headers=USER_TABLE_HEADERS)
+    return BACK_TO_HOME + """
     <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
     """
 
@@ -389,10 +385,7 @@ def logout():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return '''<h1>Unauthorized</h1><br>
-    <form action='/'>
-        <button>Back to the main page</button>
-    </form>
+    return BACK_TO_HOME + '''<h1>Unauthorized</h1><br>
     '''
 
 
@@ -427,4 +420,3 @@ if __name__ == "__main__":
         port=8000,
         debug=True,
     )
-
