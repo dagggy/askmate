@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Ask Mate | Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="../static/js/fontSize.js"></script>
 </head>
 <body>
       <table>
@@ -17,13 +18,15 @@
                   <th class="user-text">Currently logged as: {{ (current_user.email).split('@')[0] }}</th>
                   <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
               {% endif %}
+                <button onclick="enlargeFont('questions_table')" class="font-up-bnt">+</button>
+                <button onclick="ensmallenFont('questions_table')" class="font-down-bnt">-</button>
           </tr>
       </table>
        <marquee class="marquee">
        Here you can ask anything and get an answer very quickly.  You can also vote for your favorite questions or answers.  Good luck :)
        </marquee>
        &nbsp;&nbsp;
-      <table class="questions_table">
+      <table class="questions_table" style="font-size: 12px" id = questions_table>
          <form method="POST">
          <tr class="table_headers">
              {% for i in headers %}
