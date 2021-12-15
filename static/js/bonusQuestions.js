@@ -139,13 +139,35 @@ function getItemsFromFieldWithoutFilter(items, input, fieldName){
 
 
 function toggleTheme() {
-    console.log("toggle theme")
+    console.log("toggle theme");
+    let element = document.body;
+    element.style.color = "lavenderblush";
+    element.style.backgroundColor = "gray";
 }
 
 function increaseFont() {
-    console.log("increaseFont")
+    console.log("increaseFont");
+    let body = document.body;
+    let table_head = document.getElementById('doNotModifyThisId_QuestionsTableHeader');
+    let table_body = document.getElementById('doNotModifyThisId_QuestionsTableBody');
+    let element = document.getElementById('increase-font-button');
+    let style = window.getComputedStyle(element, null).getPropertyValue('font-size');
+    let currentFontSize = parseFloat(style);
+    body.style.fontSize = (currentFontSize + 3) + 'px';
+    table_head.style.fontSize = (currentFontSize + 3) + 'px';
+    table_body.style.fontSize = (currentFontSize + 3) + 'px';
 }
 
 function decreaseFont() {
     console.log("decreaseFont")
+    let body = document.body;
+    let table_head = document.getElementById('doNotModifyThisId_QuestionsTableHeader');
+    let table_body = document.getElementById('doNotModifyThisId_QuestionsTableBody');
+    let element = document.getElementById('decrease-font-button');
+    let style = window.getComputedStyle(element, null).getPropertyValue('font-size');
+    let currentFontSize = parseFloat(style);
+    body.style.fontSize = (currentFontSize - 1) + 'px';
+    table_head.style.fontSize = (currentFontSize - 1) + 'px';
+    table_body.style.fontSize = (currentFontSize - 1) + 'px';
+
 }
