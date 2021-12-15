@@ -102,6 +102,10 @@ def display_question_with_answers(question_id):
             if user_login_in_session == realdict['login'] and realdict['id'] == question['user_id']:
                 accept_answer = True
     if request.form.get('accept_answer'):
+        accepted_answer_id = data_manager.get_current_accepted_answer(question_id)['accepted_answer']
+        if accepted_answer_id is not None:
+            user_id = data_manager.get_user_id_by_answer_id(accepted_answer_id)['user_id']
+            data_manager.change_user_rep_value(user_id, '-', 15)
         answer_id = request.form.get('accept_answer')
         data_manager.add_accepted_answer_to_question_bd(answer_id, question_id)
         user_id = data_manager.get_user_id_by_answer_id(answer_id)['user_id']
