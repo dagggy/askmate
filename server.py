@@ -360,7 +360,6 @@ def remove_tag_from_question(question_id, tag_id):
 def tags():
     headers = ['Tag name', 'Use count']
     all_tags = data_manager.get_tags_and_use_count()
-    print(all_tags)
     return render_template('all_tags.html', headers=headers, all_tags=all_tags)
 
 
