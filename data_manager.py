@@ -422,7 +422,7 @@ def change_user_rep_value(cursor, user_id, symbol, value):
     cursor.execute(f"""
                         UPDATE user_data
                         SET user_reputation = user_reputation {symbol} {value}
-                        WHERE user_id = '{user_id}';
+                        WHERE id = '{user_id}';
     """)
     print(f'user {user_id} got {symbol}{value} rep')
 

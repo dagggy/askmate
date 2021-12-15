@@ -107,8 +107,10 @@ def display_question_with_answers(question_id):
         user_id = data_manager.get_user_id_by_answer_id(answer_id)['user_id']
         data_manager.change_user_rep_value(user_id, '+', 15)
     if request.form.get('not_accept_answer'):
-
+        accepted_answer_id = data_manager.get_current_accepted_answer(question_id)
+        user_id = data_manager.get_user_id_by_answer_id(accepted_answer_id['accepted_answer'])['user_id']
         data_manager.add_accepted_answer_to_question_bd("NULL", question_id)
+        data_manager.change_user_rep_value(user_id, '-', 15)
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
 
     return render_template('display_a_question.html',
