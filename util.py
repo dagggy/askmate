@@ -14,7 +14,7 @@ co do poprawy:
 * nie wyświetla się więcej niż 1 komentarz do odpowiedzi
 '''
 import database_common
-import datetime
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg', 'bmp', 'gif'}
 
@@ -38,3 +38,4 @@ def add_apostrophe(message):
             my_string += element
     message = my_string
     return message
+

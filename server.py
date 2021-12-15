@@ -42,6 +42,7 @@ def list_question_page():
     data = data_manager.get_sorted_data('question')
     for question in data:
         question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+
     if request.method == 'GET':
         category = request.args.get('by_category')
         order = request.args.get('by_order')
