@@ -82,10 +82,67 @@ def get_all_records(cursor, table_name):
 @database_common.connection_handler
 def get_users_records(cursor):
     cursor.execute(f"""
-        SELECT login, registration_date, questions_number, answers_number, comments_number, user_reputation
+        SELECT id, login, registration_date, questions_number, answers_number, comments_number, user_reputation
         FROM user_data
         """)
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_single_user_record(cursor,user_id):
+    cursor.execute(f"""
+        SELECT id, login, registration_date, questions_number, answers_number, comments_number, user_reputation
+        FROM user_data
+        WHERE id = '{user_id}'
+        """)
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_questions_written_by_user(cursor, user_id):
+    cursor.execute(f"""
+            SELECT id, submission_time, view_number, vote_number, title, message 
+            FROM question
+            WHERE user_id = '{user_id}'
+            """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_answers_written_by_user(cursor, user_id):
+    cursor.execute(f"""
+            SELECT id, submission_time, vote_number,message, question_id 
+            FROM answer
+            WHERE user_id = '{user_id}'
+            """)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_comments_written_by_user(cursor, user_id):
+    cursor.execute(f"""
+            SELECT id,
+                CASE
+                    WHEN answer_id IS NOT NULL THEN 'answer'
+                    ELSE 'question'
+                    END AS attachment, submission_time, message, edited_count,
+                CASE
+                    WHEN question_id IS NOT NULL THEN question_id
+                    ELSE (select distinct answer.question_id from comment
+                            join answer on comment.answer_id = answer.id
+                            where comment.user_id=3)
+                    END AS question_id
+            FROM comment
+            WHERE user_id = '{user_id}';
+            """)
+    return cursor.fetchall()
+'''
+select A.name
+     ,(Case A.id=2 then select C.ID from TableThree C left join A.id=C.id end)
+from TableOne A
+left join TabletTwo B
+on A.id=B.id'''
+
 ##############################################
 @database_common.connection_handler
 def get_next_id(cursor, table_name):
@@ -325,6 +382,7 @@ def update_record(cursor, record_id, changes_dict, table_name):
                                 SET {data_to_set}
                                 WHERE id = {record_id};
                                 """)
+
 ###################################
 ###################################
 ###################################

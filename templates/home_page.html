@@ -15,7 +15,7 @@
                   <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
                   <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
               {% else %}
-                  <th class="user-text">Currently logged as: {{ (current_user.email).split('@')[0] }}</th>
+                  <th class="user-text">Currently logged as: <a href="/user/{{ current_user.db_id }}">{{ (current_user.email).split('@')[0] }}</a></th>
                   <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
               {% endif %}
                 <button onclick="enlargeFont('questions_table')" class="font-up-bnt">+</button>

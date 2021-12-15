@@ -10,7 +10,10 @@ import flask_login
 BACK_TO_HOME = """<table><tr><th><a href="/"><h1>Ask Mate</h1></a></th><th><h2> - crowdsourced Q&A site</h2></th></tr></table>"""
 UPLOAD_FOLDER = Path(str(Path(__file__).parent.absolute()) + '/static/images')
 QUESTION_TABLE_HEADERS = ['Submission time', 'Number of views', 'Number of votes', 'Title', 'Message']
-USER_TABLE_HEADERS = ['login', 'registration date', 'questions number', 'answers number', 'comments number', 'reputation']
+USER_TABLE_HEADERS = ['Id', 'Login', 'Registration date', 'Questions number', 'Answers number', 'Comments number', 'Reputation']
+ANSWER_TABLE_HEADERS = ['Submission time', 'Number of votes', 'Message']
+COMMENT_TABLE_HEADERS = ['Attachment', 'Submission time', 'Message', 'Edited count']
+
 
 app = Flask(__name__)
 #python -c 'import secrets; print(secrets.token_hex())'
@@ -369,10 +372,11 @@ def registration():
 
 
 @app.route('/users', methods=['GET', 'POST'])
+@flask_login.login_required
 def display_users():
     if flask_login.current_user.is_authenticated:
         users = data_manager.get_users_records()
-        return render_template('users_page.html', users=users, headers=USER_TABLE_HEADERS)
+        return render_template('users_page.html', users=users, headers=USER_TABLE_HEADERS[1:])
     return BACK_TO_HOME + """
     <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
     """
@@ -390,6 +394,24 @@ def login():
             flask_login.login_user(user)
             return redirect(url_for('protected'))
     return redirect('/login')
+
+
+@app.route('/user/<user_id>', methods=['GET', 'POST'])
+def user_account(user_id):
+    if flask_login.current_user.is_authenticated:
+        user = data_manager.get_single_user_record(user_id)
+        questions = data_manager.get_questions_written_by_user(user_id)
+        answers = data_manager.get_answers_written_by_user(user_id)
+        comments = data_manager.get_comments_written_by_user(user_id)
+        return render_template('user_single_page.html',
+                               user=user, user_headers=USER_TABLE_HEADERS,
+                               questions=questions, question_headers=QUESTION_TABLE_HEADERS,
+                               answers=answers, answer_headers=ANSWER_TABLE_HEADERS,
+                               comments=comments, comment_headers=COMMENT_TABLE_HEADERS
+                               )
+    return BACK_TO_HOME + """
+    <br><br><br><br><center><h1>Option not available. You must login!</h1></center>
+    """
 
 
 @app.route('/protected')
