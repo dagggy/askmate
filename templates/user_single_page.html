@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
      <title>Ask Mate | User Account</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <table>
         <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
-            <th><h2> - crowdsourced Q&A site</h2></th></tr>
+            <th><h2> - crowdsourced Q&A site</h2></th>
+        <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th></tr>
     </table>
      <table name="user_table">
          <tr style="background-color: blanchedalmond">
