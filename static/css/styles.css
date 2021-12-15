@@ -137,3 +137,27 @@ mark {
   top: 3%;
   right: 20%
 }
+.font-up-bnt {
+  margin: auto;
+  color: greenyellow;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: green;
+  border: 1px solid darkgreen;
+  border-radius: 2px;
+  position: absolute;
+  top: 2%;
+  right: 270px
+}
+.font-down-bnt {
+  margin: auto;
+  color: darkred;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: red;
+  border: 1px solid darkred;
+  border-radius: 2px;
+  position: absolute;
+  top: 2%;
+  right: 300px
+}
