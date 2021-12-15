@@ -245,7 +245,11 @@ def get_user_id_by_email(cursor, email):
 @database_common.connection_handler
 def get_tags_and_use_count(cursor):
     cursor.execute(f"""
-    
+                        SELECT name, count(question_tag.*)
+                        FROM tag
+                        LEFT JOIN question_tag
+                        ON tag.id = question_tag.tag_id
+                        GROUP BY name;
     """)
     return cursor.fetchall()
 
