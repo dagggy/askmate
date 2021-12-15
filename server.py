@@ -354,6 +354,13 @@ def remove_tag_from_question(question_id, tag_id):
 
 
 ################Sprint_3########
+
+
+@app.route('/tags', methods=['GET'])
+def tags():
+    return render_template('all_tags.html')
+
+
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     if request.method == 'POST':

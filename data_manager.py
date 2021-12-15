@@ -242,6 +242,14 @@ def get_user_id_by_email(cursor, email):
     return cursor.fetchone()
 
 
+@database_common.connection_handler
+def get_tags_and_use_count(cursor):
+    cursor.execute(f"""
+    
+    """)
+    return cursor.fetchall()
+
+
 ################################################
 
 @database_common.connection_handler
