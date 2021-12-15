@@ -134,8 +134,19 @@
                 
                 {% for answer in answers_base %}
                 <form method="POST">
-                 <fieldset>
-                     <legend> Answer #{{ answers_base.index(answer) + 1 }}_______{{ answer['submission_time'] }}____<button type="submit" value="Accept_answer">Accept this answer</button> </legend>
+                 <fieldset
+                 {% if answer['id'] == question['accepted_answer'] %}
+                 style="background-color: beige"
+                 {% endif %}
+                 >
+                     <legend> Answer #{{ answers_base.index(answer) + 1 }}_______{{ answer['submission_time'] }}____
+                         {% if accept_answer == True %}
+                         <button type="submit"  value="{{ answer['id'] }}" name="accept_answer">Accept this answer</button>
+                             {% if answer['id'] == question['accepted_answer'] %}
+                             <button type="submit" value="{{ answer['id'] }}" name="not_accept_answer">Disaccept this answer</button>
+                         {% endif %}
+                     {% endif %}
+                     </legend>
                      <p>{{ answer['message'] }}</p>
                      {% if image != None %}
                         <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image' sizes="100"></p><br>
