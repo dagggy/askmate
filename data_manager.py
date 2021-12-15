@@ -265,6 +265,16 @@ def get_user_id_by_answer_id(cursor, answer_id):
 
 
 @database_common.connection_handler
+def get_user_id_by_question_id(cursor, question_id):
+    cursor.execute(f"""
+                        SELECT user_id
+                        FROM question
+                        WHERE id = '{question_id}';
+    """)
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
 def get_current_accepted_answer(cursor, question_id):
     cursor.execute(f"""
                         SELECT accepted_answer

@@ -81,10 +81,22 @@ def display_question_with_answers(question_id):
         if request.form.get('vote_answer'):
             id = request.form['vote_answer']
             add = int(request.form['vote'])
+            if add == -1:
+                user_id = data_manager.get_user_id_by_answer_id(id)['user_id']
+                data_manager.change_user_rep_value(user_id, '-', 2)
+            if add == 1:
+                user_id = data_manager.get_user_id_by_answer_id(id)['user_id']
+                data_manager.change_user_rep_value(user_id, '+', 10)
             data_manager.update_record(id, {'vote_number': add}, 'answer')
         if request.form.get('vote_question'):
             id = request.form['vote_question']
             add = int(request.form['vote'])
+            if add == -1:
+                user_id = data_manager.get_user_id_by_question_id(id)['user_id']
+                data_manager.change_user_rep_value(user_id, '-', 2)
+            if add == 1:
+                user_id = data_manager.get_user_id_by_question_id(id)['user_id']
+                data_manager.change_user_rep_value(user_id, '+', 5)
             data_manager.update_record(id, {'vote_number': add}, 'question')
             return redirect(f'/question/{question_id}')
         answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
