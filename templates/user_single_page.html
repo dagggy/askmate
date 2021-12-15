@@ -5,10 +5,86 @@
      <title>Ask Mate | User Account</title>
 </head>
 <body>
-     <table>
+    <table>
         <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
             <th><h2> - crowdsourced Q&A site</h2></th></tr>
     </table>
-     
+     <table name="user_table">
+         <tr style="background-color: blanchedalmond">
+                 {% for header in user_headers %}
+                     <th>{{ header }}</th>
+                 {% endfor %}
+         </tr>
+         <tr>{% for key, value in user.items() %}
+                <td style="background-color: beige">{{ value }}</td>
+            {% endfor %}</tr>
+     </table>
+    <br><br>
+    {% if questions != [] %}
+    <table name="questions_table">
+         <tr style="background-color: blanchedalmond">
+                 {% for header in question_headers %}
+                     <th>{{ header }}</th>
+                 {% endfor %}
+         </tr>
+        {% for question in questions %}
+         <tr>{% for key, value in question.items() %}
+             {% if key != 'id' %}
+                {% if key == 'title' %}
+                    <td style="background-color: beige"><a href="/question/{{ question['id'] }}">{{ value }}</a></td>
+                {% else %}
+                    <td style="background-color: beige">{{ value }}</td>
+                {% endif %}
+             {% endif %}
+            {% endfor %}</tr>
+        {% endfor %}
+     </table>
+    {% endif %}
+    <br><br>
+    {% if answers != [] %}
+    <table name="answers_table">
+         <tr style="background-color: blanchedalmond">
+                 {% for header in answer_headers %}
+                     <th>{{ header }}</th>
+                 {% endfor %}
+         </tr>
+        {% for answer in answers %}
+         <tr>{% for key, value in answer.items() %}
+             {% if key != 'id' %}
+                {% if key != 'question_id' %}
+                {% if key == 'message' %}
+                    <td style="background-color: beige"><a href="/question/{{ answer['question_id'] }}">{{ value }}</a></td>
+                {% else %}
+                    <td style="background-color: beige">{{ value }}</td>
+                {% endif %}
+             {% endif %}
+             {% endif %}
+            {% endfor %}</tr>
+        {% endfor %}
+     </table>
+    {% endif %}
+    <br><br>
+    {% if comments != [] %}
+    <table name="comments_table">
+         <tr style="background-color: blanchedalmond">
+                 {% for header in comment_headers %}
+                     <th>{{ header }}</th>
+                 {% endfor %}
+         </tr>
+        {% for comment in comments %}
+         <tr>{% for key, value in comment.items() %}
+             {% if key != 'id' %}
+             {% if key != 'question_id' %}
+                {% if key == 'message' %}
+                    <td style="background-color: beige"><a href="/question/{{ comment['question_id'] }}">{{ value }}</a></td>
+                {% else %}
+                    <td style="background-color: beige">{{ value }}</td>
+                {% endif %}
+             {% endif %}
+             {% endif %}
+            {% endfor %}</tr>
+        {% endfor %}
+     </table>
+    {% endif %}
 </body>
 </html>
