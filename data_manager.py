@@ -254,6 +254,25 @@ def get_tags_and_use_count(cursor):
     return cursor.fetchall()
 
 
+@database_common.connection_handler
+def get_user_id_by_answer_id(cursor, answer_id):
+    cursor.execute(f"""
+                        SELECT user_id
+                        FROM answer
+                        WHERE id = '{answer_id}';
+    """)
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_current_accepted_answer(cursor, question_id):
+    cursor.execute(f"""
+                        SELECT accepted_answer
+                        FROM question
+                        WHERE id = '{question_id}'
+    """)
+    return cursor.fetchone()
+
 ################################################
 
 @database_common.connection_handler
@@ -396,6 +415,18 @@ def update_record(cursor, record_id, changes_dict, table_name):
                                 """)
 
 ###################################
+
+
+@database_common.connection_handler
+def change_user_rep_value(cursor, user_id, symbol, value):
+    cursor.execute(f"""
+                        UPDATE user_data
+                        SET user_reputation = user_reputation {symbol} {value}
+                        WHERE user_id = '{user_id}';
+    """)
+    print(f'user {user_id} got {symbol}{value} rep')
+
+
 ###################################
 ###################################
 @database_common.connection_handler
