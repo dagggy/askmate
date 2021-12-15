@@ -83,20 +83,24 @@ def display_question_with_answers(question_id):
             add = int(request.form['vote'])
             if add == -1:
                 user_id = data_manager.get_user_id_by_answer_id(id)['user_id']
-                data_manager.change_user_rep_value(user_id, '-', 2)
+                if user_id is not None:
+                    data_manager.change_user_rep_value(user_id, '-', 2)
             if add == 1:
                 user_id = data_manager.get_user_id_by_answer_id(id)['user_id']
-                data_manager.change_user_rep_value(user_id, '+', 10)
+                if user_id is not None:
+                    data_manager.change_user_rep_value(user_id, '+', 10)
             data_manager.update_record(id, {'vote_number': add}, 'answer')
         if request.form.get('vote_question'):
             id = request.form['vote_question']
             add = int(request.form['vote'])
             if add == -1:
                 user_id = data_manager.get_user_id_by_question_id(id)['user_id']
-                data_manager.change_user_rep_value(user_id, '-', 2)
+                if user_id is not None:
+                    data_manager.change_user_rep_value(user_id, '-', 2)
             if add == 1:
                 user_id = data_manager.get_user_id_by_question_id(id)['user_id']
-                data_manager.change_user_rep_value(user_id, '+', 5)
+                if user_id is not None:
+                    data_manager.change_user_rep_value(user_id, '+', 5)
             data_manager.update_record(id, {'vote_number': add}, 'question')
             return redirect(f'/question/{question_id}')
         answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
@@ -117,16 +121,19 @@ def display_question_with_answers(question_id):
         accepted_answer_id = data_manager.get_current_accepted_answer(question_id)['accepted_answer']
         if accepted_answer_id is not None:
             user_id = data_manager.get_user_id_by_answer_id(accepted_answer_id)['user_id']
-            data_manager.change_user_rep_value(user_id, '-', 15)
+            if user_id is not None:
+                data_manager.change_user_rep_value(user_id, '-', 15)
         answer_id = request.form.get('accept_answer')
         data_manager.add_accepted_answer_to_question_bd(answer_id, question_id)
         user_id = data_manager.get_user_id_by_answer_id(answer_id)['user_id']
-        data_manager.change_user_rep_value(user_id, '+', 15)
+        if user_id is not None:
+            data_manager.change_user_rep_value(user_id, '+', 15)
     if request.form.get('not_accept_answer'):
         accepted_answer_id = data_manager.get_current_accepted_answer(question_id)
         user_id = data_manager.get_user_id_by_answer_id(accepted_answer_id['accepted_answer'])['user_id']
         data_manager.add_accepted_answer_to_question_bd("NULL", question_id)
-        data_manager.change_user_rep_value(user_id, '-', 15)
+        if user_id is not None:
+            data_manager.change_user_rep_value(user_id, '-', 15)
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
 
     return render_template('display_a_question.html',
