@@ -24,27 +24,23 @@
           </tr>
       </table>
        <marquee class="marquee">
-       Here you can ask anything and get an answer very quickly.  You can also vote for your favorite questions or answers.  Good luck :)
+       This is a list of all tags and how many times they were used.
        </marquee>
-       &nbsp;&nbsp;
-      <table class="questions_table" style="font-size: 12px" id = questions_table>
-         <form method="POST">
-         <tr class="table_headers">
-             {% for i in headers %}
-                 <th>{{ i }}</th>
-             {% endfor %}
-         </tr>
-         </form>
-          {% for question in data %}
-          <tr>
-              <td>{{ question['submission_time'] }}</td>
-              <td>{{ question['view_number'] }}</td>
-              <td>{{ question['vote_number'] }}</td>
-              <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
-              <td>{{ question['message'] }}</td>
-          </tr>
-          {% endfor %}
-     </table>
-        <table><tr><th><a href="/list"><h3>More questions...</h3></a></th></table>
- </body>
- </html>
+
+<table class="questions_table" style="font-size: 12px;" id = questions_table>
+    <form method="POST">
+        <tr class="table_headers">
+        {% for i in headers %}
+            <th>{{ i }}</th>
+        {% endfor %}
+        </tr>
+    </form>
+    {% for tag in all_tags %}
+    <tr>
+          <td>{{ tag['name'] }}</td>
+          <td>{{ tag['count'] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

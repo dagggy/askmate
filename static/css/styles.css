@@ -137,6 +137,13 @@ mark {
   top: 3%;
   right: 20%
 }
+.tagList {
+  font-size: 15px;
+  font-family: "Arial Hebrew Scholar";
+  position: absolute;
+  top: 3%;
+  right: 40%
+}
 .font-up-bnt {
   margin: auto;
   color: greenyellow;
