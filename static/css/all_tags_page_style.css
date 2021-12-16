@@ -1,0 +1,86 @@
+
+ul {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  width: 100%;
+  list-style-type: none;
+  font-size: 17px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #deb887;
+  box-shadow:inset 0 -0.6em 1em -0.35em rgba(0,0,0,0.17),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: darkblue;
+  font-weight: bold;
+  font-family: Futura;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  box-shadow:inset 0 -0.9em 1.2em -0.5em rgba(0,0,0,0.17),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+  background-color: #80620C;
+  color: #F7F9F9;
+}
+.menu-item-logo{
+  text-indent: 120%;
+  white-space: nowrap;
+  overflow: hidden;
+  background-image: url('/static/images/logo.png');
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+html{
+  background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)), url("/static/images/background.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.tags_table{
+  position: absolute;
+  top: 16%;
+  left: 35%;
+  font-size: 15px;
+  text-align: center;
+  width: 30%;
+  background-color: #FDEBD0;
+  border: 2px solid #AF4C0A;
+  border-collapse: collapse;
+  border-radius: 0.2em;
+  opacity: 0.97;
+}
+thead {
+  background-color: #DC7633;
+  box-shadow:inset 0 0.5em 2em -0.5em rgba(0,0,0,0.3),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.3),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+  font-size: 17px;
+}
+table.tags_table  td, table.tags_table  th {
+  border: 2px solid #AF4C0A;
+  box-shadow:inset 0 -0.2em 0.5em -0.2em rgba(0,0,0,0.3),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+}
+.marquee {
+  font-size: 18px;
+  font-weight: bold;
+  color: darkblue;
+  border:1px solid lightcoral;
+  background-color: #FAD7A0;
+  box-shadow:inset 0 -1em 1em -1em rgba(0,0,0,0.5),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.3),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+  direction: ltr;
+  opacity: 0.85;
+}

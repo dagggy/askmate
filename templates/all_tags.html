@@ -2,44 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ask Mate | Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="../static/js/fontSize.js"></script>
+    <title>Ask Mate | Tags</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all_tags_page_style.css') }}">
 </head>
 <body>
-      <table>
-          <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
-              <th><h2> - crowdsourced Q&A site</h2></th>
-              <a href="/users" class="userList"><h3>USERS LIST</h3></a>
-              <a href="/tags" class="tagList"><h3>TAGS</h3></a>
-              {% if not current_user.is_authenticated %}
-                  <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
-                  <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
-              {% else %}
-                  <th class="user-text">Currently logged as: <a href="/user/{{ current_user.db_id }}">{{ (current_user.email).split('@')[0] }}</a></th>
-                  <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
-              {% endif %}
-                <button onclick="enlargeFont('questions_table')" class="font-up-bnt">+</button>
-                <button onclick="ensmallenFont('questions_table')" class="font-down-bnt">-</button>
-          </tr>
-      </table>
-       <marquee class="marquee">
-       This is a list of all tags and how many times they were used.
-       </marquee>
+<div class="menu">
+    <ul class="menu-bar">
+        <li class="menu-item-logo" style="pointer-events: none !important;"><a href="/">Ask Mate | Home</a></li>
+        <li class="menu-item"><a href="/">Home</a></li>
+        <li class="menu-item"><a href="/list">Questions</a></li>
+        <li class="menu-item"><a href="/tags">Tags</a></li>
+        <li class="menu-item"><a href="/users">Users List</a></li>
+        {% if not current_user.is_authenticated %}
+            <li class="menu-item"><a href="/add_question">Add question</a></li>
+            <li class="menu-item" style="float: right; background-color:#EAB722"><a href="/login">LogIN</a></li>
+            <li class="menu-item-button" style="float: right; background-color:#F7DD72"><a
+                    href="/registration">SignUP</a>
+            </li>
+        {% else %}
+            <li class="menu-item" style="float: right; background-color:#D36D00;"><a href="/logout">LogOUT</a></li>
+            <li class="menu-item" style="float: right;"><a href="/user/{{ current_user.db_id }}">Logged as:
+                {{ (current_user.email).split('@')[0] }}</a></li>
+        {% endif %}
+    </ul>
+</div>
+&nbsp;&nbsp;
+<marquee class="marquee">
+    This is a list of all tags and how many times they were used.
+</marquee>
 
-<table class="questions_table" style="font-size: 12px;" id = questions_table>
-    <form method="POST">
-        <tr class="table_headers">
-        {% for i in headers %}
-            <th>{{ i }}</th>
-        {% endfor %}
-        </tr>
-    </form>
+<table class="tags_table">
+    <thead>
+    {% for i in headers %}
+        <th>{{ i }}</th>
+    {% endfor %}
+    </thead>
     {% for tag in all_tags %}
-    <tr>
-          <td>{{ tag['name'] }}</td>
-          <td>{{ tag['count'] }}</td>
-    </tr>
+        <tr>
+            <td>{{ tag['name'] }}</td>
+            <td>{{ tag['count'] }}</td>
+        </tr>
     {% endfor %}
 </table>
 </body>
