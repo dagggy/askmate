@@ -39,6 +39,8 @@ def get_sorted_data(cursor, table_name, order_by=None, order_direction=None, que
         order = 'ASC'
     elif order_direction == "Descending" or order_direction == None:
         order = 'DESC'
+    else:
+        order = 'DESC'
 
     if order_by == "Number of Votes" or order_by == None:
         category = "vote_number"
@@ -50,6 +52,8 @@ def get_sorted_data(cursor, table_name, order_by=None, order_direction=None, que
         category = "LOWER(message)"
     elif order_by == 'Number of Views':
         category = "view_number"
+    else:
+        category = "vote_number"
 
     cursor.execute(f"""
         SELECT * FROM {table_name}

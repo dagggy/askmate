@@ -15,6 +15,7 @@
         <li class="menu-item"><a href="/tags">Tags</a></li>
         <li class="menu-item"><a href="/users">Users List</a></li>
         {% if not current_user.is_authenticated %}
+            <li class="menu-item"><a href="/add_question">Add question</a></li>
             <li class="menu-item" style="float: right; background-color:#EAB722"><a href="/login">LogIN</a></li>
             <li class="menu-item-button" style="float: right; background-color:#F7DD72"><a
                     href="/registration">SignUP</a>
