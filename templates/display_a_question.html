@@ -108,7 +108,7 @@
                             </p>
                         {% endif %}
                     </div>
-                <hr>
+                    <hr>
                     <div class="text-right">
                         {% if number_of_comments_to_question > 0 %}
                             <h5>Comments to question:</h5>
@@ -131,7 +131,6 @@
                     </div>
                 </div>
             </div>
-
         </fieldset>
     </div>
     <!--------------------------------------------------------------------------------------------------------------------->
@@ -233,7 +232,7 @@
                                 </p>
                                 <br>
                             {% endif %}
-                        <hr>
+                            <hr>
                             {% if number_of_comments_to_answer > 0 %}
                                 {% for comment in comments_to_answer[0] %}
                                     {% if comment['answer_id'] == answer['id'] %}
@@ -245,10 +244,10 @@
                                                 {% endif %}
                                                 {% if current_user.is_authenticated %}
                                                     | <a href="/comment/{{ comment['id'] }}/edit"><img class="btn-small"
-                                                                                                               src="../static/icons/edit.png"></a>
+                                                                                                       src="../static/icons/edit.png"></a>
                                                     |
                                                     <a href="/comment/{{ comment['id'] }}/delete"><img class="btn-small"
-                                                                                                        src="../static/icons/delete.png"></a>
+                                                                                                       src="../static/icons/delete.png"></a>
                                                 {% endif %}
                                             </legend>
                                             {{ comment['message'] }}
