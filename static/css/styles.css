@@ -190,7 +190,7 @@ mark {
   font-family: Inter;
   font-weight: 600;
   font-size: 16px;
-  width: 900px;
+  width: 1000px;
   height: auto;
   letter-spacing: 0px;
   text-align: left;
@@ -240,7 +240,7 @@ mark {
 
 .main {
   width: 100%;
-  background-image: url(/static/images/comment-button-icon-vector-for-social-media-comment-icon-vector-illustration-design-template-comment-icon-or-button-for-video-channel-blog-social-2C6X340-removebg-preview.png);
+  background-image: url(/static/images/watermark-comment.png);
   background-position-x: right;
   background-position-y: initial;
   background-repeat: no-repeat;
@@ -251,16 +251,55 @@ mark {
 
 .main2 {
   width: 100%;
-  background-image: url(/static/images/Frame-4262-300x300.png);
+  background-image: url(/static/images/watermark-tag.png);
   background-position-x: 1000px;
   background-position-y: 300px;
   background-repeat: no-repeat;
   background-color: rgba(0,20,10, 0.6);
 }
 
+.main3 {
+  width: 100%;
+  background-image: url(/static/images/watermark-answer.png);
+  background-size: 250px;
+  background-position-x: 1100px;
+  background-position-y: 1px;
+  background-repeat: no-repeat;
+  background-color: rgba(0,20,10, 0.6);
+}
+
+.main4 {
+  width: 100%;
+  background-size: 750px;
+  background-image: url(/static/images/watermark-question.png);
+  background-position-x: 800px;
+  background-position-y: 100px;
+  background-repeat: no-repeat;
+  background-color: rgba(0,20,10, 0.6);
+}
+
+.main5 {
+  width: 100%;
+  background-size: 750px;
+  background-image: url(/static/images/watermark-comment.png);
+  background-position-x: 900px;
+  background-position-y: 100px;
+  background-repeat: no-repeat;
+  background-color: rgba(0,20,10, 0.6);
+}
+
+.main6 {
+  width: 100%;
+  background-size: 750px;
+  background-image: url(/static/images/watermark-question.png);
+  background-position-x: 900px;
+  background-position-y: 100px;
+  background-repeat: no-repeat;
+  background-color: rgba(0,20,10, 0.6);
+}
 
 .styledimg {
-background-image: url(/static/images/comment-button-icon-vector-for-social-media-comment-icon-vector-illustration-design-template-comment-icon-or-button-for-video-channel-blog-social-2C6X340-removebg-preview.png);
+background-image: url(/static/images/watermark-comment.png);
 background-repeat: no-repeat;
 width: 600px;
 height: 200px;
@@ -269,6 +308,11 @@ height: 200px;
 .title {
   margin: 15px;
 }
+
+.title1 {
+  margin: 1px;
+}
+
 
 .select-tag {
   display: block;

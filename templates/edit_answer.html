@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head></head>
-<body>
+<head>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="main3">
 <table>
     <tr>
         <th>
@@ -13,13 +15,13 @@
     </tr>
 </table>
 <form method="POST" enctype='multipart/form-data'>
-    <textarea style="width: 400px; height: 90px;" name='description' placeholder="Edit your answer..."
+    <textarea class="input-question" name='description' placeholder="Edit your answer..."
               required>{{ answer['message'] }}</textarea><br>
 
-    <label>Upload new image to override the current one
-        <input type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'>
-    </label><br>
-    <input type='submit'>
+    <label><h3 class="title">Upload new image to override the current one</h3>
+        <input class="primary-button" type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'>
+    </label>
+    <input class="primary-button" type='submit' value="Edit">
 </form>
 <hr>
 <img src="/static/images/{{ answer['image'] }}">

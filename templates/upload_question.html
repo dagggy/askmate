@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head></head>
-<body>
+<head>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="main4">
 <table>
     <tr>
         <th>
@@ -13,10 +15,10 @@
     </tr>
 </table>
 <form method="POST" enctype=multipart/form-data>
-    <input type='text' name='title' placeholder="Title" required><br>
-    <textarea name='description' placeholder="Description" required></textarea><br>
-    <input type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'><br>
-    <input type='submit'>
+    <input class="input-question" type='text' name='title' placeholder="Title" required><br>
+    <textarea class="input-question" name='description' placeholder="Description" required></textarea><br>
+    <input class="input-question" type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'><br>
+    <input class="primary-button" type='submit' value="Add">
 </form>
 </body>
 </html>
