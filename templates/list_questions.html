@@ -7,43 +7,52 @@
     <script src="../static/js/fontSize.js"></script>
 </head>
 <body>
-      <table>
-          <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
-              <th><h2> - crowdsourced Q&A site</h2></th>
-              <a href="/users" class="userList"><h3>USERS LIST</h3></a>
-              <a href="/tags" class="tagList"><h3>TAGS</h3></a>
-              {% if not current_user.is_authenticated %}
-                  <th><a href="/login"><button type="submit" class="login-bnt">LogIN</button></a></th>
-                  <th><a href="/registration"><button type="submit" class="registration-bnt">SignUP</button></a></th>
-              {% else %}
-                  <th class="user-text">Currently logged as: {{ (current_user.email).split('@')[0] }}</th>
-                  <th><a href="/logout"><button type="submit" class="logout-btn">LogOUT</button></a></th>
-              {% endif %}
-                <button onclick="enlargeFont('questions_table')" class="font-up-bnt">+</button>
-                <button onclick="ensmallenFont('questions_table')" class="font-down-bnt">-</button>
-          </tr>
-      </table>
-      <form class="search" action="/search" method="GET">
-          <input type="text" placeholder="Search..." name="search">
-          <button type="submit">Search</button>
-      </form>
-    &nbsp;&nbsp;
-    <table>
-        <tr>
-            <td><table>
+<table>
+    <tr>
+        <th><a href="/"><h1>Ask Mate</h1></a></th>
+        <th><h2> - crowdsourced Q&A site</h2></th>
+        <a href="/users" class="userList"><h3>USERS LIST</h3></a>
+        <a href="/tags" class="tagList"><h3>TAGS</h3></a>
+        {% if not current_user.is_authenticated %}
+            <th><a href="/login">
+                <button type="submit" class="login-bnt">LogIN</button>
+            </a></th>
+            <th><a href="/registration">
+                <button type="submit" class="registration-bnt">SignUP</button>
+            </a></th>
+        {% else %}
+            <th class="user-text">Currently logged as: {{ (current_user.email).split('@')[0] }}</th>
+            <th><a href="/logout">
+                <button type="submit" class="logout-btn">LogOUT</button>
+            </a></th>
+        {% endif %}
+        <button onclick="enlargeFont('questions_table')" class="font-up-bnt">+</button>
+        <button onclick="ensmallenFont('questions_table')" class="font-down-bnt">-</button>
+    </tr>
+</table>
+<form class="search" action="/search" method="GET">
+    <input type="text" placeholder="Search..." name="search">
+    <button type="submit">Search</button>
+</form>
+&nbsp;&nbsp;
+<table>
+    <tr>
+        <td>
+            <table>
                 <tr>
-                    <td>Sort by </td>
+                    <td>Sort by</td>
                     <td>
                         <form method="GET">
-                        <select name="by_category" id="category">
-                            <option id="title">Title</option>
-                            <option id="submission_time">Chronology</option>
-                            <option id="message">Message</option>
-                            <option id="view_number">Number of Views</option>
-                            <option id="vote_number">Number of Votes</option>
-                        </select>
+                            <select name="by_category" id="category">
+                                <option id="title">Title</option>
+                                <option id="submission_time">Chronology</option>
+                                <option id="message">Message</option>
+                                <option id="view_number">Number of Views</option>
+                                <option id="vote_number">Number of Votes</option>
+                            </select>
                     </td>
-                    <td>&nbsp;</td><td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
                     <td>
                         <select name="by_order" id="order">
                             <option id="asc">Ascending</option>
@@ -53,37 +62,47 @@
                         </form>
                     </td>
                 </tr>
-            </table></td>
-        </tr>
-    </table>
-    </td>
-             <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-     <td>
-         {% if current_user.is_authenticated %}
-           <form action="/add_question">
-             <button class="press_button" ><strong>Add question</strong></button>
-           </form>
-         {% endif %}
-     </td>
-         </tr>
-     </table>&nbsp;
-     <table class="questions_table" id="questions_table" style="font-size: 12px">
-         <form method="POST">
-         <tr class="table_headers">
-             {% for i in headers %}
-                 <th>{{ i }}</th>
-             {% endfor %}
-         </tr>
-         </form>
-            {% for question in data %}
-          <tr>
-              <td>{{ question['submission_time'] }}</td>
-              <td>{{ question['view_number'] }}</td>
-              <td>{{ question['vote_number'] }}</td>
-              <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
-              <td>{{ question['message'] }}</td>
-          </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>
+    {% if current_user.is_authenticated %}
+        <form action="/add_question">
+            <button class="press_button"><strong>Add question</strong></button>
+        </form>
+    {% endif %}
+</td>
+</tr>
+</table>&nbsp;
+<table class="questions_table" id="questions_table" style="font-size: 12px">
+    <form method="POST">
+        <tr class="table_headers">
+            {% for i in headers %}
+                <th>{{ i }}</th>
             {% endfor %}
-     </table>
- </body>
- </html>
+        </tr>
+    </form>
+    {% for question in data %}
+        <tr>
+            <td>{{ question['submission_time'] }}</td>
+            <td>{{ question['view_number'] }}</td>
+            <td>{{ question['vote_number'] }}</td>
+            <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+            <td>{{ question['message'] }}</td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

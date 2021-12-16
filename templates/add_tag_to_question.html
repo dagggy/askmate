@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head></head>
-<body>
- <table>
-        <tr>
-            <th>
-                <a href="/"><h1>Ask Mate</h1></a>
-            </th>
-            <th>
-                <h2> - crowdsourced Q&A site</h2>
-            </th>
-        </tr>
-    </table>
-        <h3>Add tag to question:</h3>
-        <fieldset><strong>{{ question['message'] }}</strong></fieldset>
-    <form method = "POST">
-        <br>You can create new tag:
-        <br><textarea name='thisistag' placeholder="Add your tag..."></textarea><br>
-        <br>Or select one of this:
-        <select name="all_tags" id="tags">
-            {% for tag in tags %}
+<head>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="main2">
+<table>
+    <tr>
+        <th>
+            <a href="/"><h1>Ask Mate</h1></a>
+        </th>
+        <th>
+            <h2> - crowdsourced Q&A site</h2>
+        </th>
+    </tr>
+</table>
+<h3 class="title">Add tag to question:</h3>
+<fieldset class="input-question"><strong>{{ question['message'] }}</strong></fieldset>
+<form method="POST">
+    <br><h3 class="title">You can create new tag:</h3>
+    <textarea class="input-tag" maxlength="10" name='thisistag' placeholder="Add your tag..."></textarea><br>
+    <h3 class="title">Or select one of this:</h3>
+    <select class="select-tag" name="all_tags" id="tags">
+        {% for tag in tags %}
             <option id="tags">{{ tag['name'] }}</option>
-            {% endfor %}
-        </select>
-        <br><input type="submit" value="Add tag">
-    </form>
+        {% endfor %}
+    </select>
+    <br><input class="primary-button" type="submit" value="Add tag">
+</form>
 </body>
 </html>

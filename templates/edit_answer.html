@@ -2,25 +2,26 @@
 <html lang="en">
 <head></head>
 <body>
- <table>
-        <tr>
-            <th>
-                <a href="/"><h1>Ask Mate</h1></a>
-            </th>
-            <th>
-                <h2> - crowdsourced Q&A site</h2>
-            </th>
-        </tr>
-    </table>
-    <form method = "POST" enctype='multipart/form-data'>
-        <textarea style="width: 400px; height: 90px;" name='description' placeholder="Edit your answer..." required>{{ answer['message'] }}</textarea><br>
+<table>
+    <tr>
+        <th>
+            <a href="/"><h1>Ask Mate</h1></a>
+        </th>
+        <th>
+            <h2> - crowdsourced Q&A site</h2>
+        </th>
+    </tr>
+</table>
+<form method="POST" enctype='multipart/form-data'>
+    <textarea style="width: 400px; height: 90px;" name='description' placeholder="Edit your answer..."
+              required>{{ answer['message'] }}</textarea><br>
 
-        <label>Upload new image to override the current one
+    <label>Upload new image to override the current one
         <input type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'>
-        </label><br>
-        <input type='submit'>
-    </form>
-    <hr>
-    <img src="/static/images/{{ answer['image'] }}">
+    </label><br>
+    <input type='submit'>
+</form>
+<hr>
+<img src="/static/images/{{ answer['image'] }}">
 </body>
 </html>
