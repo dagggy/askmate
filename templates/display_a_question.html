@@ -160,106 +160,104 @@
         <p></p>
         <!--------------------------------------------------------------------------------------------------------------------->
         {% for answer in answers_base %}
-            <form method="POST">
-                <fieldset
+            <fieldset
+                    {% if answer['id'] == question['accepted_answer'] %}
+                        style="background-color: beige"
+                    {% endif %}
+            >
+                <legend>
+                    {{ answer['submission_time'] }}
+                    {% if accept_answer == True %}
+                        {% if answer['id'] != question['accepted_answer'] %}
+                            |
+                            <button class="site_button" type="submit" value="{{ answer['id'] }}"
+                                    name="accept_answer">
+                                <img class="btn-small" src="../static/icons/accept_big.png">
+                            </button>
+                        {% endif %}
                         {% if answer['id'] == question['accepted_answer'] %}
-                            style="background-color: beige"
+                            |
+                            <button class='site_button' type="submit" value="{{ answer['id'] }}"
+                                    name="not_accept_answer">
+                                <img class="btn-small" src="../static/icons/no_big.png">
+                            </button>
                         {% endif %}
-                >
-                    <legend>
-                        {{ answer['submission_time'] }}
-                        {% if accept_answer == True %}
-                            {% if answer['id'] != question['accepted_answer'] %}
-                                |
-                                <button class="site_button" type="submit" value="{{ answer['id'] }}"
-                                        name="accept_answer">
-                                    <img class="btn-small" src="../static/icons/accept_big.png">
+                    {% endif %}
+                </legend>
+                <div class="flex">
+                    <div class="votes">
+                        <form method="POST">
+                            <button class='site_button' href="/question/{{ question['id'] }}" type="submit"
+                                    value="{{ answer['id'] }}" name="vote_answer">
+                                <img class="btn" src="../static/icons/arrow_up_big.png">
+                            </button>
+                            <input type="hidden" id="up" name="vote" value="1">
+                        </form>
+                        <div class="vote_num">
+                            <p class="vertical-center txt">{{ answer['vote_number'] }}</p>
+                        </div>
+                        <form method="POST">
+                            <button class='site_button' href="/question/{{ question['id'] }}" type="submit"
+                                    value="{{ question['id'] }}"
+                                    name="vote_answer">
+                                <img class="btn" src="../static/icons/arrow_down_big.png">
+                            </button>
+                            <input type="hidden" id="down" name="vote" value="-1">
+                        </form>
+                        {% if current_user.is_authenticated %}
+                            <a href="/answer/{{ answer['id'] }}/new-comment">
+                                <button class="site_button">
+                                    <img class="btn" src="../static/icons/text_symbol.png">
                                 </button>
-                            {% endif %}
-                            {% if answer['id'] == question['accepted_answer'] %}
-                                |
-                                <button class='site_button' type="submit" value="{{ answer['id'] }}"
-                                        name="not_accept_answer">
-                                    <img class="btn-small" src="../static/icons/no_big.png">
+                            </a><br>
+                            <a href="/question/{{ question['id'] }}/{{ answer['id'] }}/delete">
+                                <button class="site_button">
+                                    <img class="btn" src="../static/icons/delete.png">
                                 </button>
-                            {% endif %}
+                            </a><br>
+                            <a href="/answer/{{ answer['id'] }}/edit">
+                                <button class="site_button">
+                                    <img class="btn" src="../static/icons/edit.png">
+                                </button>
+                            </a>
                         {% endif %}
-                    </legend>
-                    <div class="flex">
-                        <div class="votes">
-                            <form method="POST">
-                                <button class='site_button' href="/question/{{ question['id'] }}" type="submit"
-                                        value="{{ question['id'] }}" name="vote_answer">
-                                    <img class="btn" src="../static/icons/arrow_up_big.png">
-                                </button>
-                                <input type="hidden" id="up" name="vote" value="1">
-                            </form>
-                            <div class="vote_num">
-                                <p class="vertical-center txt">{{ answer['vote_number'] }}</p>
-                            </div>
-                            <form method="POST">
-                                <button class='site_button' href="/question/{{ question['id'] }}" type="submit"
-                                        value="{{ question['id'] }}"
-                                        name="vote_answer">
-                                    <img class="btn" src="../static/icons/arrow_down_big.png">
-                                </button>
-                                <input type="hidden" id="down" name="vote" value="-1">
-                            </form>
-                            {% if current_user.is_authenticated %}
-                                <a href="/answer/{{ answer['id'] }}/new-comment">
-                                    <button class="site_button">
-                                        <img class="btn" src="../static/icons/text_symbol.png">
-                                    </button>
-                                </a><br>
-                                <a href="/question/{{ question['id'] }}/{{ answer['id'] }}/delete">
-                                    <button class="site_button">
-                                        <img class="btn" src="../static/icons/delete.png">
-                                    </button>
-                                </a><br>
-                                <a href="/answer/{{ answer['id'] }}/edit">
-                                    <button class="site_button">
-                                        <img class="btn" src="../static/icons/edit.png">
-                                    </button>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="no_flex">
-                            <h2 class="no_margins">Answer #{{ answers_base.index(answer) + 1 }}</h2>
-                            <fieldset class="no_flex">{{ answer['message'] }}</fieldset>
-                            {% if image != '' %}
-                                <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image'
-                                     sizes="100">
-                                </p>
-                                <br>
-                            {% endif %}
-                            <hr>
-                            {% if number_of_comments_to_answer > 0 %}
-                                {% for comment in comments_to_answer[0] %}
-                                    {% if comment['answer_id'] == answer['id'] %}
-                                        <fieldset class="no_flex right">
-                                            <legend align="right">
-                                                {{ comment['submission_time'] }}
-                                                {% if comment['edited_count'] != None %}
-                                                    , Edited {{ comment['edited_count'] }} time(s)
-                                                {% endif %}
-                                                {% if current_user.is_authenticated %}
-                                                    | <a href="/comment/{{ comment['id'] }}/edit"><img class="btn-small"
-                                                                                                       src="../static/icons/edit.png"></a>
-                                                    |
-                                                    <a href="/comment/{{ comment['id'] }}/delete"><img class="btn-small"
-                                                                                                       src="../static/icons/delete.png"></a>
-                                                {% endif %}
-                                            </legend>
-                                            {{ comment['message'] }}
-                                        </fieldset>
-
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        </div>
                     </div>
-                </fieldset>
-            </form>
+                    <div class="no_flex">
+                        <h2 class="no_margins">Answer #{{ answers_base.index(answer) + 1 }}</h2>
+                        <fieldset class="no_flex">{{ answer['message'] }}</fieldset>
+                        {% if image != '' %}
+                            <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image'
+                                 sizes="100">
+                            </p>
+                            <br>
+                        {% endif %}
+                        <hr>
+                        {% if number_of_comments_to_answer > 0 %}
+                            {% for comment in comments_to_answer[0] %}
+                                {% if comment['answer_id'] == answer['id'] %}
+                                    <fieldset class="no_flex right">
+                                        <legend align="right">
+                                            {{ comment['submission_time'] }}
+                                            {% if comment['edited_count'] != None %}
+                                                , Edited {{ comment['edited_count'] }} time(s)
+                                            {% endif %}
+                                            {% if current_user.is_authenticated %}
+                                                | <a href="/comment/{{ comment['id'] }}/edit"><img class="btn-small"
+                                                                                                   src="../static/icons/edit.png"></a>
+                                                |
+                                                <a href="/comment/{{ comment['id'] }}/delete"><img class="btn-small"
+                                                                                                   src="../static/icons/delete.png"></a>
+                                            {% endif %}
+                                        </legend>
+                                        {{ comment['message'] }}
+                                    </fieldset>
+
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </fieldset>
         {% endfor %}
     </div>
 </div>
