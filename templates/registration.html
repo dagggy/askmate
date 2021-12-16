@@ -6,21 +6,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
 </head>
 <body>
-      <table><tr><th><a href="/"><h1>Ask Mate</h1></a></th>
-            <th><h2> - crowdsourced Q&A site</h2></th></tr></table>
+<table>
+    <tr>
+        <th><a href="/"><h1>Ask Mate</h1></a></th>
+        <th><h2> - crowdsourced Q&A site</h2></th>
+    </tr>
+</table>
 <center><h1>Welcome, Stranger!</h1></center>
-    {% if message != '' %}
-     <p>{{ message }}</p><br>
-     {% endif %}
+{% if message != '' %}
+    <p>{{ message }}</p><br>
+{% endif %}
 
-     <form action="/registration" method = 'POST'>
-         <div class="container">
-             <label>Login : </label>
-             <input type="text" placeholder="Enter Email" name="email" required>
-             <label>Password : </label>
-             <input type="password" placeholder="Enter Password" name="password" required>
-             <button type="submit">Sign Up</button>
-         </div>
-     </form>
- </body>
- </html>
+<form action="/registration" method='POST'>
+    <div class="container">
+        <label>Login : </label>
+        <input type="text" placeholder="Enter Email" name="email" required>
+        <label>Password : </label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+        <button type="submit">Sign Up</button>
+    </div>
+</form>
+</body>
+</html>
