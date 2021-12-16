@@ -86,7 +86,7 @@ INSERT INTO public.user_data VALUES (2, 'user2@gmail.com', '$2b$12$lLTE7KoA70Axp
 INSERT INTO public.user_data VALUES (3, 'user3@gmail.com', '$2b$12$lLTE7KoA70AxpVdJ3yjKMuJX7jlEhyjpAxDmCvHR1XFUERWN/F4s2', '2017-04-28 08:29:00', 3, 3, 1, 80);
 INSERT INTO public.user_data VALUES (4, 'user4@gmail.com', '$2b$12$lLTE7KoA70AxpVdJ3yjKMuJX7jlEhyjpAxDmCvHR1XFUERWN/F4s2', '2017-04-28 08:29:00', 2, 1, 4, 30);
 INSERT INTO public.user_data VALUES (5, 'user5@gmail.com', '$2b$12$lLTE7KoA70AxpVdJ3yjKMuJX7jlEhyjpAxDmCvHR1XFUERWN/F4s2', '2017-04-28 08:29:00', 0, 2, 1, 20);
-INSERT INTO public.user_data VALUES (6, 'admin@gmail.com', '$2b$12$X.K0XpVZyiyzL0JNeKOMZuPM..fQyhU/naH2XIQ6UeQpjcYYKhC4y', '2017-04-28 08:29:00', 0, 0, 0, 0);
+--INSERT INTO public.user_data VALUES (6, 'admin@gmail.com', '$2b$12$X.K0XpVZyiyzL0JNeKOMZuPM..fQyhU/naH2XIQ6UeQpjcYYKhC4y', '2017-04-28 08:29:00', 0, 0, 0, 0);
 -- simple user pass = 1
 -- admin pass = 12345
 

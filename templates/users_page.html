@@ -2,37 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     <title>Ask Mate | Users</title>
+    <title>Ask Mate | Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users_list_page_style.css') }}">
 </head>
 <body>
-     <table>
-        <tr><th><a href="/"><h1>Ask Mate</h1></a></th>
-            <th><h2> - crowdsourced Q&A site</h2></th></tr>
-    </table>
-     <table>
-     <tr style="background-color: blanchedalmond">
-             {% for i in headers %}
-                 <th>{{ i }}</th>
-             {% endfor %}
-     </tr>
-        {% for user in users %}
-            <tr>{% for key, value in user.items() %}
-                {% if key != 'id' %}
-                <td style="background-color: beige">
-                    {% if key == 'login' %}
-                        {% set value = value.split('@')[0] %}
-                        {% if  user['id'] == current_user.db_id%}
-                            <a href="/user/{{ user['id'] }}">{{ value }}</a>
-                        {% else %}
-                            {{ value }}
-                        {% endif %}
+<div class="menu">
+    <ul class="menu-bar">
+        <li class="menu-item-logo" style="pointer-events: none !important;"><a href="/">Ask Mate | Home</a></li>
+        <li class="menu-item"><a href="/">Home</a></li>
+        <li class="menu-item"><a href="/list">Questions</a></li>
+        <li class="menu-item"><a href="/tags">Tags</a></li>
+        <li class="menu-item"><a href="/users">Users List</a></li>
+        {% if not current_user.is_authenticated %}
+            <li class="menu-item"><a href="/add_question">Add question</a></li>
+            <li class="menu-item" style="float: right; background-color:#EAB722"><a href="/login">LogIN</a></li>
+            <li class="menu-item-button" style="float: right; background-color:#F7DD72"><a
+                    href="/registration">SignUP</a>
+            </li>
+        {% else %}
+            <li class="menu-item" style="float: right; background-color:#D36D00;"><a href="/logout">LogOUT</a></li>
+            <li class="menu-item" style="float: right;"><a href="/user/{{ current_user.db_id }}">Logged as:
+                {{ (current_user.email).split('@')[0] }}</a></li>
+        {% endif %}
+    </ul>
+</div>
+<table class="users_table" id="questions_table">
+    <thead>
+    {% for i in headers %}
+        <th>{{ i }}</th>
+    {% endfor %}
+    </thead>
+    {% for user in users %}
+        <tr>{% for key, value in user.items() %}
+            {% if key != 'id' %}
+                <td>
+                {% if key == 'login' %}
+                    {% set value = value.split('@')[0] %}
+                    {% if  user['id'] == current_user.db_id %}
+                        <a href="/user/{{ user['id'] }}"><strong>{{ value }}</strong></a>
                     {% else %}
                         {{ value }}
                     {% endif %}
+                {% else %}
+                    {{ value }}
                 {% endif %}
-                </td>
-            {% endfor %}</tr>
-        {% endfor %}
-     </table>
+            {% endif %}
+        </td>
+        {% endfor %}</tr>
+    {% endfor %}
+</table>
 </body>
 </html>
