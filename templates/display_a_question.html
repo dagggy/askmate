@@ -1,212 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>AskMate | Question</title>
-        <style>
-            .image{
-                width:100%;
-                max-width:600px;
-            }
-        </style>
-        <link rel="stylesheet" href="../static/css/styles.css">
-    </head>
-    <body>
-      <table>
+<head>
+    <meta charset="utf-8">
+    <title>AskMate | Question</title>
+    <style>
+        .image {
+            width: 100%;
+            max-width: 600px;
+        }
+    </style>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/display_question.css">
+</head>
+
+<body>
+<div id="header">
+    <table>
         <tr>
-            <th>
-                <a href="/"><h1>Ask Mate</h1></a>
-            </th>
-            <th>
-                <h2> - crowdsourced Q&A site</h2>
-            </th>
+            <th><a href="/"><h1>Ask Mate</h1></a></th>
+            <th><h2> - crowdsourced Q&A site</h2></th>
+            <a href="/users" class="userList"><h3>USERS LIST</h3></a>
+            <a href="/tags" class="tagList"><h3>TAGS</h3></a>
+            {% if not current_user.is_authenticated %}
+                <th><a href="/login">
+                    <button type="submit" class="login-bnt">LogIN</button>
+                </a></th>
+                <th><a href="/registration">
+                    <button type="submit" class="registration-bnt">SignUP</button>
+                </a></th>
+            {% else %}
+                <th class="user-text">Currently logged as: <a
+                        href="/user/{{ current_user.db_id }}">{{ (current_user.email).split('@')[0] }}</a></th>
+                <th><a href="/logout">
+                    <button type="submit" class="logout-btn">LogOUT</button>
+                </a></th>
+            {% endif %}
+            <button onclick="enlargeFont('questions_table')" class="font-up-bnt">+</button>
+            <button onclick="ensmallenFont('questions_table')" class="font-down-bnt">-</button>
         </tr>
     </table>
-        <h1>{{ question['title'] }}</h1>
-        <table>    
-            <tr>
-                <td>
-                    <p>{{ question['submission_time'] }}</p>
-                    Question: #{{ question['id'] }} &nbsp;
-                    Number of view: {{ question['view_number'] }} &nbsp;
-                    Number of vote: {{ question['vote_number'] }} &nbsp;
-                    Tags:
-                    {% for tag in list_of_tags %}
-                        #{{ tag[0][0]['name'] }}<sup><a href="/question/{{ question['id'] }}/tag/{{ tag[1] }}/delete_tag">x</a></sup>
-                    {% endfor %}
-                </td>
-            </tr>
-            <tr>
-                <td><fieldset><strong>{{ question['message'] }}</strong></fieldset></td>
-                <p>
-                    {% if image != None %}
-                        <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100"></p><br>
-                    {% endif %}
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <td>Evaluate this question:</td>
-                <td><form method="POST">
-                    <button href="/question/{{ question['id'] }}" type="submit" value="{{ question['id'] }}" name="vote_question">Vote Up!</button>
-                    <input type="hidden" id="up" name="vote" value="1">
-                </form></td>
-                <td><form method="POST">
-                    <button href="/question/{{ question['id'] }}" type="submit"  value="{{ question['id'] }}" name="vote_question">Vote Down!</button>
-                    <input type="hidden" id="down" name="vote" value="-1">
-                </form></td>
-            </tr>
-            {% if current_user.is_authenticated %}
-            <tr><a href="/question/{{ question['id'] }}/edit_page"> <input type="button" value="Edit Question"> </a></tr>
-            {% endif %}
-        </table>
-      {% if current_user.is_authenticated %}
-        <form action="/question/{{ question['id'] }}/new_comment" method="POST">
-
-                 <p>
-                     Press the button to add a comment:
-                     <a href="/question/{{ question['id'] }}/new_comment">
-                         <input type="button" value="Add comment">
-                     </a>
-                 </p>
-            </form>
-
-            <form action="/question/{{ question['id'] }}/new_tag" method="POST">
-                 <p>
-                     To add tag press this button:
-                     <a href="/question/{{ question['id'] }}/new_tag">
-                         <input type="button" value="Add tag">
-                     </a>
-                 </p>
-            </form>
-      {% endif %}
-      {% if number_of_comments_to_question > 0 %}
-        <h5>Comments to question:</h5>
-        {% for comment in comments_to_question %}
-            <fieldset>
-            <legend> {{ comment['submission_time'] }}
-                | <a href="/comment/{{comment['id']}}/editt" name="1">Edit comment...</a>
-                | <a href="/comment/{{ comment['id'] }}/delete">Delete comment...</a>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------->
+<div>
+    <div id="question">
+        <fieldset>
+            <legend>
+                Q #{{ question['id'] }} |
+                {{ question['view_number'] }} views |
+                {{ question['submission_time'] }} |
+                Tags:
+                {% for tag in list_of_tags %}
+                    #{{ tag[0][0]['name'] }}
+                    <sup><a href="/question/{{ question['id'] }}/tag/{{ tag[1] }}/delete_tag">x</a></sup>
+                {% endfor %}
+                <a href="/question/{{ question['id'] }}/new_tag">+</a>
             </legend>
-            {{ comment['message'] }}
+            <div class="flex">
+                <div class="votes">
+                    <form method="POST">
+                        <button class='site_button' href="/question/{{ question['id'] }}" type="submit"
+                                value="{{ question['id'] }}" name="vote_question">
+                            <img class="btn" src="../static/icons/arrow_up_big.png">
+                        </button>
+                        <input type="hidden" id="up" name="vote" value="1">
+                    </form>
+                    <div class="vote_num">
+                        <p class="vertical-center txt">{{ question['vote_number'] }}</p>
+                    </div>
+                    <form method="POST">
+                        <button class='site_button' href="/question/{{ question['id'] }}" type="submit"
+                                value="{{ question['id'] }}"
+                                name="vote_question">
+                            <img class="btn" src="../static/icons/arrow_down_big.png">
+                        </button>
+                        <input type="hidden" id="down" name="vote" value="-1">
+                    </form>
+                    {% if current_user.is_authenticated %}
+                        <a href="/question/{{ question['id'] }}/new_comment">
+                            <button class="site_button">
+                                <img class="btn" src="../static/icons/text_symbol.png">
+                            </button>
+                        </a><br>
+                        <a href="/question/{{ question['id'] }}/delete">
+                            <button class="site_button">
+                                <img class="btn" src="../static/icons/delete.png">
+                            </button>
+                        </a><br>
+                        <a href="/question/{{ question['id'] }}/edit_page">
+                            <button class="site_button">
+                                <img class="btn" src="../static/icons/edit.png">
+                            </button>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="no_flex">
+                    <div class="message no_flex">
+                        <p id="title">{{ question['title'] }}</p>
+                        <fieldset id="q_message">{{ question['message'] }}</fieldset>
+                        {% if image != '' %}
+                            <p>
+                                <img src="../static/images/{{ image }}" alt='{{ image }}' class='image' sizes="100">
+                            </p>
+                        {% endif %}
+                    </div>
+                    {% if number_of_comments_to_question > 0 %}
+                        <h5>Comments to question:</h5>
+                        {% for comment in comments_to_question %}
+                            <fieldset>
+                                <legend> {{ comment['submission_time'] }}
+                                    {% if current_user.is_authenticated %}
+                                        |<a href="/comment/{{ comment['id'] }}/editt" name="1"><img class="btn-small"
+                                                                                                    src="../static/icons/edit.png"></a>
+                                        |<a href="/comment/{{ comment['id'] }}/delete"><img class="btn-small"
+                                                                                            src="../static/icons/delete.png"></a>
+                                    {% endif %}
+                                </legend>
+                                {{ comment['message'] }}
 
-            </fieldset>
-        {% endfor %}
-        {% endif %}
-        <div>
+                            </fieldset>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+<!--------------------------------------------------------------------------------------------------------------------->
+    <div>
         {% if current_user.is_authenticated %}
             <form action="/question/{{ question['id'] }}" method="POST">
-                 <p>
-                     If you want to add an answer, please, press the button:
-                     <a href="/question/{{ question['id'] }}/new-answer">
-                         <input type="button" value="Add answer">
-                     </a>
-                 </p>
-            </form>
-            <form action="/question/{{ question['id'] }}/delete" method="POST">
-                To delete the question, press here!
-                <input type='submit' value='Delete'>
+                <p>
+                    If you want to add an answer, please, press the button:
+                    <a href="/question/{{ question['id'] }}/new-answer">
+                        <input type="button" value="Add answer">
+                    </a>
+                </p>
             </form>
         {% endif %}
-            <form method="GET">
-                <table>
-                    <tr>
-                        <td>Sort by </td>
+        <form method="GET">
+            <table>
+                <tr>
+                    <td>Sort by</td>
+                    <td>
+                        <select name="by_category" id="category">
+                            <option id="vote_number">Number of Votes</option>
+                            <option id="chronology">Chronology</option>
+                        </select>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <select name="by_order" id="order">
+                            <option id="asc">Ascending</option>
+                            <option id="dsc">Descending</option>
+                        </select>
+                    </td>
+                    <td><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+        <p></p>
+<!--------------------------------------------------------------------------------------------------------------------->
+        {% for answer in answers_base %}
+            <form method="POST">
+                <fieldset
+                        {% if answer['id'] == question['accepted_answer'] %}
+                            style="background-color: beige"
+                        {% endif %}
+                >
+                    <legend>
+                        Answer #{{ answers_base.index(answer) + 1 }}
+                        | {{ answer['submission_time'] }}
+                        {% if accept_answer == True %}
+                            {% if answer['id'] != question['accepted_answer'] %}
+                                | <button class="site_button" type="submit" value="{{ answer['id'] }}" name="accept_answer">
+                                    <img class="btn-small" src="../static/icons/accept_big.png">
+                                </button>
+                            {% endif %}
+                            {% if answer['id'] == question['accepted_answer'] %}
+                                | <button class='site_button' type="submit" value="{{ answer['id'] }}" name="not_accept_answer">
+                                    <img class="btn-small" src="../static/icons/no_big.png">
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </legend>
+
+                    <p>{{ answer['message'] }}</p>
+                    {% if image != '' %}
+                        <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image' sizes="100">
+                        </p>
+                        <br>
+                    {% endif %}
+                    <table>
                         <td>
-                            <select name="by_category" id="category">
-                                <option id="vote_number">Number of Votes</option>
-                                <option id="chronology">Chronology</option>
-                            </select>
-                        </td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>
-                            <select name="by_order" id="order">
-                                <option id="asc">Ascending</option>
-                                <option id="dsc">Descending</option>
-                            </select>
-                        </td>
-                        <td><input type="submit" value="Submit"></td>
-                    </tr>
-                </table>
-                    </form>
-                <p></p>
-                
-                {% for answer in answers_base %}
-                <form method="POST">
-                 <fieldset
-                 {% if answer['id'] == question['accepted_answer'] %}
-                 style="background-color: beige"
-                 {% endif %}
-                 >
-                     <legend> Answer #{{ answers_base.index(answer) + 1 }}_______{{ answer['submission_time'] }}____
-                         {% if accept_answer == True %}
-                         <button type="submit"  value="{{ answer['id'] }}" name="accept_answer">Accept this answer</button>
-                             {% if answer['id'] == question['accepted_answer'] %}
-                             <button type="submit" value="{{ answer['id'] }}" name="not_accept_answer">Disaccept this answer</button>
-                         {% endif %}
-                     {% endif %}
-                     </legend>
-                     <p>{{ answer['message'] }}</p>
-                     {% if image != None %}
-                        <img src="../static/images/{{ answer['image'] }}" alt='{{ image }}' class='image' sizes="100"></p><br>
-                     {% endif %}
-                     <table>
-                         <td>
-                              <form method="POST">
-                                <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}" name="vote_answer">Vote Up!</button>
+                            <form method="POST">
+                                <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}"
+                                        name="vote_answer">Vote Up!
+                                </button>
                                 <input type="hidden" id="up" name="vote" value="1">
-                              </form>
-                         </td>
+                            </form>
+                        </td>
                         <td>
                             <p>{{ answer['vote_number'] }}</p>
                         </td>
-                         <td>
-                             <form method="POST">
-                                 <button href="/question/{{ question['id'] }}" type="submit"  value="{{ answer['id'] }}" name="vote_answer">Vote Down!</button>
-                                 <input type="hidden" id="down" name="vote" value="-1">
-                             </form>
-                         </td>
-                     </table>
-                 {% if current_user.is_authenticated %}
-                <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
-                    <button type="submit" style="margin:0px;padding:0px; background:none; border:none;outline:inherit">
-                        <img class="btn" title="Delete this answer" src="../static/icons/delete.png" alt="submit" style="width:40px;height:40px;">
-                    </button>
-                    <a href="/answer/{{ answer['id'] }}/edit"><img title="Edit this answer" class="btn" src="../static/icons/edit.png" alt="submit" style="width:40px;height:40px;"></a>
-                </form>
-                 <form action="/question/{{ question['id'] }}/new_comment" method="POST">
-                 <p>
-                     Press the button to add a comment:
-                     <a href="/answer/{{ answer['id'] }}/new-comment">
-                         <input type="button" value="Add comment">
-                     </a>
-                 </p>
-            </form>
-                 {% endif %}
-                 {% if number_of_comments_to_answer > 0 %}
-                    <h5>Comments to answer:</h5>
-                    {% for comment in comments_to_answer[0] %}
-                        {% if comment['answer_id'] == answer['id'] %}
-                        <fieldset>
-                        <legend>
-                            {{ comment['submission_time'] }}
-                            {% if comment['edited_count'] != None %}
-                                , Edited {{ comment['edited_count'] }} time(s)
+                        <td>
+                            <form method="POST">
+                                <button href="/question/{{ question['id'] }}" type="submit" value="{{ answer['id'] }}"
+                                        name="vote_answer">Vote Down!
+                                </button>
+                                <input type="hidden" id="down" name="vote" value="-1">
+                            </form>
+                        </td>
+                    </table>
+                    {% if current_user.is_authenticated %}
+                        <form action="/question/{{ question['id'] }}/{{ answer['id'] }}/delete" method="GET">
+                            <button type="submit" class="site_button">
+                                <img class="btn" title="Delete this answer" src="../static/icons/delete.png"
+                                     alt="submit">
+                            </button>
+                            <a href="/answer/{{ answer['id'] }}/edit"><img title="Edit this answer" class="btn"
+                                                                           src="../static/icons/edit.png" alt="submit"></a>
+                        </form>
+                        <form action="/question/{{ question['id'] }}/new_comment" method="POST">
+                            <p>
+                                Press the button to add a comment:
+                                <a href="/answer/{{ answer['id'] }}/new-comment">
+                                    <input type="button" value="Add comment">
+                                </a>
+                            </p>
+                        </form>
+                    {% endif %}
+                    {% if number_of_comments_to_answer > 0 %}
+                        <h5>Comments to answer:</h5>
+                        {% for comment in comments_to_answer[0] %}
+                            {% if comment['answer_id'] == answer['id'] %}
+                                <fieldset>
+                                    <legend>
+                                        {{ comment['submission_time'] }}
+                                        {% if comment['edited_count'] != None %}
+                                            , Edited {{ comment['edited_count'] }} time(s)
+                                        {% endif %}
+                                        {% if current_user.is_authenticated %}
+                                            | <a href="/comment/{{ comment['id'] }}/edit">Edit comment...</a>
+                                            | <a href="/comment/{{ comment['id'] }}/delete">Delete comment...</a>
+                                        {% endif %}
+                                    </legend>
+                                    {{ comment['message'] }}
+                                </fieldset>
                             {% endif %}
-                        {% if current_user.is_authenticated %}
-                            | <a href="/comment/{{comment['id']}}/edit">Edit comment...</a>
-                            | <a href="/comment/{{ comment['id'] }}/delete">Delete comment...</a>
-                        {% endif %}
-                        </legend>
-                        {{ comment['message'] }}
-                        </fieldset>
-                        {% endif %}
-                    {% endfor %}
+                        {% endfor %}
                     {% endif %}
                 </fieldset>
-                    </form>
-                {% endfor %}
-        </div>
-    </body>
+            </form>
+        {% endfor %}
+    </div>
+</div>
+</body>
 </html>
