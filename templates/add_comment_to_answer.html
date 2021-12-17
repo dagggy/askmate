@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
+<head>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="main">
 <table>
     <tr>
         <th>
@@ -11,12 +14,11 @@
         </th>
     </tr>
 </table>
-<h3>Add comment to answer:</h3>
-<fieldset><strong>{{ answer['message'] }}</strong></fieldset>
+<h3 class="title">Add comment to this answer:</h3>
+<fieldset class="input-question"><strong>{{ answer['message'] }}</strong></fieldset>
 <form method="POST">
-    <br><textarea name='description' placeholder="Add your comment..." required></textarea><br>
-    <input type="submit" value="Add comment">
-
+    <br><textarea class="input-answer" name='description' placeholder="Add your comment..." required></textarea><br>
+    <input class="primary-button" type="submit" value="Add comment">
 </form>
 </body>
 </html>

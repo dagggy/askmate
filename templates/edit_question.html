@@ -3,8 +3,9 @@
     <head>
         <meta charset="utf-8">
         <title>AskMate | Edit Question</title>
+        <link rel="stylesheet" href="/static/css/styles.css">
     </head>
-    <body>
+    <body class="main4">
      <table>
         <tr>
             <th>
@@ -15,34 +16,30 @@
             </th>
         </tr>
     </table>
-        <h1>Edit question</h1>
+        <h1 class="title">Edit question</h1>
         <div>
-            <p>Question id: {{ question['id'] }}</p>
-            <p>Submission time: {{ question['submission_time'] }}</p>
-            <p>Number of view: {{ question['view_number'] }}</p>
-            <p>Number of vote: {{ question['vote_number'] }}</p>
+            <h4 class="title1">Question id: {{ question['id'] }}</h4>
+            <h4 class="title1">Submission time: {{ question['submission_time'] }}</h4>
+            <h4 class="title1">Number of view: {{ question['view_number'] }}</h4>
+            <h4 class="title1">Number of vote: {{ question['vote_number'] }}</h4>
         </div>
         <form enctype=multipart/form-data method="POST">
             <div>
-                <label for="question-title">Title:
+                <h3 class="title">Title:</h3>
+                <textarea class="input-question" id="question-title" name="title" placeholder="Title" style='width: 200px' required>{{ question['title'] }}</textarea>
                 <br>
-                <textarea id="question-title" name="title" placeholder="Title" style='width: 200px' required>{{ question['title'] }}</textarea>
-                <br>
-                </label>
             </div>
+            <div>
+                <h3 class="title">Message:</h3>
+                <textarea class="input-question" id="question-message" name="message" placeholder="Description" style='width: 400px; height: 150px' required>{{ question['message'] }}</textarea>
+                <br>
 
-            <div>
-                <label for="question-message">Message:
-                <br>
-                <textarea id="question-message" name="message" placeholder="Description" style='width: 400px; height: 150px' required>{{ question['message'] }}</textarea>
-                <br>
-                </label>
             </div>
             <div>
-                <input type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'><br>
+                <input class="primary-button" type='file' name='file' accept='.png,.jpeg,.jpg,.bmp,.gif'><br>
             </div>
             <div>
-                <input type="submit" value="Submit">
+                <input class="primary-button" type="submit" value="Submit">
             </div>
         </form>
     </body>

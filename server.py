@@ -136,7 +136,9 @@ def display_question_with_answers(question_id):
         if user_id is not None:
             data_manager.change_user_rep_value(user_id, '-', 15)
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
-
+    question['submission_time'] = question['submission_time'].replace(microsecond=0)
+    for answer in answers_data_base:
+        answer['submission_time'] = answer['submission_time'].replace(microsecond=0)
     return render_template('display_a_question.html',
                            question=question,
                            image=image,
@@ -209,10 +211,14 @@ def new_question():
 @flask_login.login_required
 def delete_question(question_id):
     if request.method == 'POST':
-        data_manager.delete_question_by_id_bd(question_id)
-        return render_template('delete_question.html')
+        value = list(request.form)
+        if value == ['yes']:
+            data_manager.delete_question_by_id_bd(question_id)
+            return render_template('delete_question.html')
+        else:
+            return redirect(f'/question/{question_id}')
     elif request.method == 'GET':
-        return redirect('/')
+        return render_template('confirm_question_deletion.html')
 
 
 @app.route('/question/<question_id>/<answer_id>/delete', methods=['GET', 'POST'])
