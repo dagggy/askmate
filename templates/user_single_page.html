@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     <title>Ask Mate | User Account</title>
+    <title>Ask Mate | User Account</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/user_single_page_style.css') }}">
 </head>
 <body>
-    <div class="menu">
+<div class="menu">
     <ul class="menu-bar">
         <li class="menu-item-logo" style="pointer-events: none !important;"><a href="/">Ask Mate | Home</a></li>
         <li class="menu-item"><a href="/">Home</a></li>
@@ -21,87 +21,86 @@
             </li>
         {% else %}
             <li class="menu-item" style="float: right; background-color:#D36D00;"><a href="/logout">LogOUT</a></li>
-            <li class="menu-item" style="float: right;"><a href="/bonus-questions"><img src="/static/images/secret.png" width="47px"></a></li>
+            <li class="menu-item" style="float: right;"><a href="/bonus-questions"><img src="/static/images/secret.png"
+                                                                                        width="47px"></a></li>
         {% endif %}
     </ul>
 </div>
-     <table class="user_table" name="user_table">
-     <tr>
-     Account statistics
-     </tr>
-         <thead>
-                 {% for header in user_headers %}
-                     <th>{{ header }}</th>
-                 {% endfor %}
-         </thead>
-         <tr>{% for key, value in user.items() %}
-                <td>{{ value }}</td>
-            {% endfor %}</tr>
-     </table>
-    <br><br>
-    {% if questions != [] %}
+<table class="user_table" name="user_table">
+    <thead>
+    {% for header in user_headers %}
+        <th>{{ header }}</th>
+    {% endfor %}
+    </thead>
+    <tr>{% for key, value in user.items() %}
+        <td>{{ value }}</td>
+    {% endfor %}</tr>
+</table>
+<br><br>
+{% if questions != [] %}
     <table class="questions_table" name="questions_table">
-         <thead>
-                 {% for header in question_headers %}
-                     <th>{{ header }}</th>
-                 {% endfor %}
-         </thead>
+        <thead>
+        {% for header in question_headers %}
+            <th>{{ header }}</th>
+        {% endfor %}
+        </thead>
         {% for question in questions %}
-         <tr>{% for key, value in question.items() %}
-             {% if key != 'id' %}
-                {% if key == 'title' %}
-                    <td><a href="/question/{{ question['id'] }}">{{ value }}</a></td>
-                {% else %}
-                    <td>{{ value }}</td>
+            <tr>{% for key, value in question.items() %}
+                {% if key != 'id' %}
+                    {% if key == 'title' %}
+                        <td><a href="/question/{{ question['id'] }}">{{ value }}</a></td>
+                    {% else %}
+                        <td>{{ value }}</td>
+                    {% endif %}
                 {% endif %}
-             {% endif %}
             {% endfor %}</tr>
         {% endfor %}
-     </table>
-    {% endif %}
-    {% if answers != [] %}
+    </table>
+{% endif %}
+{% if answers != [] %}
     <table class="answers_table" style="top:70%" name="answers_table">
-         <thead>
-                 {% for header in answer_headers %}
-                     <th>{{ header }}</th>
-                 {% endfor %}
-         </thead>
+        <thead>
+        {% for header in answer_headers %}
+            <th>{{ header }}</th>
+        {% endfor %}
+        </thead>
         {% for answer in answers %}
-         <tr>{% for key, value in answer.items() %}
-             {% if key != 'id' %}
-                {% if key != 'question_id' %}
-                {% if key == 'message' %}
-                    <td><a href="/question/{{ answer['question_id'] }}">{{ value }}</a></td>
-                {% else %}
-                    <td>{{ value }}</td>
+            <tr>{% for key, value in answer.items() %}
+                {% if key != 'id' %}
+                    {% if key != 'question_id' %}
+                        {% if key == 'message' %}
+                            <td><a href="/question/{{ answer['question_id'] }}">{{ value }}</a></td>
+                        {% else %}
+                            <td>{{ value }}</td>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
-             {% endif %}
-             {% endif %}
             {% endfor %}</tr>
         {% endfor %}
-     </table>
-    {% endif %}
-    {% if comments != [] %}
+    </table>
+{% endif %}
+{% if comments != [] %}
     <table class="comments_table" style="top:17%" name="comments_table">
-         <thead>
-                 {% for header in comment_headers %}
-                     <th>{{ header }}</th>
-                 {% endfor %}
-         </thead>
+        <thead>
+        {% for header in comment_headers %}
+            <th>{{ header }}</th>
+        {% endfor %}
+        </thead>
         {% for comment in comments %}
-         <tr>{% for key, value in comment.items() %}
-             {% if key != 'id' %}
-             {% if key != 'question_id' %}
-                {% if key == 'message' %}
-                    <td style="text-align:left;"><a href="/question/{{ comment['question_id'] }}">{{ value }}</a></td>
-                {% else %}
-                    <td>{{ value }}</td>
+            <tr>{% for key, value in comment.items() %}
+                {% if key != 'id' %}
+                    {% if key != 'question_id' %}
+                        {% if key == 'message' %}
+                            <td style="text-align:left;"><a
+                                    href="/question/{{ comment['question_id'] }}">{{ value }}</a></td>
+                        {% else %}
+                            <td>{{ value }}</td>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
-             {% endif %}
-             {% endif %}
             {% endfor %}</tr>
         {% endfor %}
-     </table>
-    {% endif %}
+    </table>
+{% endif %}
 </body>
 </html>
