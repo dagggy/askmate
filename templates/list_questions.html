@@ -22,7 +22,7 @@
         {% else %}
             <li class="menu-item"><a href="/add_question">Add question</a></li>
             <li class="menu-item" style="float: right; background-color:#D36D00;"><a href="/logout">LogOUT</a></li>
-            <li class="menu-item" style="float: right;"><a href="/user/{{ current_user.db_id }}">Logged as:
+            <li class="menu-item" style="float: right;"><a href="/user/{{ current_user.db_id }}">See statistics:
                 {{ (current_user.email).split('@')[0] }}</a></li>
         {% endif %}
     </ul>
