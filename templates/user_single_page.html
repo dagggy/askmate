@@ -21,7 +21,7 @@
             </li>
         {% else %}
             <li class="menu-item" style="float: right; background-color:#D36D00;"><a href="/logout">LogOUT</a></li>
-            <li class="menu-item" style="float: right;"><a href="/bonus-questions"><img src="/static/images/secret.png"
+            <li class="menu-item-hover" style="float: right;"><a href="/bonus-questions"><img src="/static/images/secret.png"
                                                                                         width="47px"></a></li>
         {% endif %}
     </ul>
@@ -36,7 +36,6 @@
         <td>{{ value }}</td>
     {% endfor %}</tr>
 </table>
-<br><br>
 {% if questions != [] %}
     <table class="questions_table" name="questions_table">
         <thead>
