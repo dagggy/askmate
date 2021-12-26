@@ -432,13 +432,13 @@ def update_record(cursor, record_id, changes_dict, table_name):
 
 
 @database_common.connection_handler
-def change_user_rep_value(cursor, user_id, symbol, value):
+def change_user_rep_value(cursor, user_id, value):
     cursor.execute(f"""
                         UPDATE user_data
-                        SET user_reputation = user_reputation {symbol} {value}
+                        SET user_reputation = user_reputation + {value}
                         WHERE id = '{user_id}';
     """)
-    print(f'user {user_id} got {symbol}{value} rep')
+    print(f'user {user_id} got + {value} rep')
 
 
 ###################################

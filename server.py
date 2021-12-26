@@ -32,16 +32,14 @@ def main():
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
     data = data_manager.get_top_records('question', 'submission_time', size_limit=5)
-    for question in data:
-        question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+    data = util.convert_time_to_readable(data)
     return render_template('home_page.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
 @app.route('/list', methods=['GET', 'POST'])
 def list_question_page():
     data = data_manager.get_sorted_data('question')
-    for question in data:
-        question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+    data = util.convert_time_to_readable(data)
 
     if request.method == 'GET':
         category = request.args.get('by_category')
@@ -50,104 +48,127 @@ def list_question_page():
     return render_template('list_questions.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
+# @app.route('/question/<question_id>', methods=['GET', 'POST'])
+# def display_question_with_answers(question_id):
+#     data_manager.update_record(question_id, {'view_number': 1}, 'question')
+#     answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
+#     answers_data_base = util.convert_time_to_readable(answers_data_base)
+#     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
+#     question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
+#     comments_to_question = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'comment')
+#     number_of_comments_to_question = len(comments_to_question)
+#     comments_to_question = util.convert_time_to_readable(comments_to_question)
+#     image = util.get_image(question)
+#     number_of_comments_to_answer, list_of_tags, comments_to_answer = util.get_all_comments_to_answer(answers_data_base, question_id)
+#
+#     if request.method == 'POST':
+#         if request.form.get('vote_answer'):
+#             id = request.form['vote_answer']
+#             add = int(request.form['vote'])
+#             util.voting_and_rep_user_update(add, id, 10, 'answer')
+#         if request.form.get('vote_question'):
+#             id = request.form['vote_question']
+#             add = int(request.form['vote'])
+#             util.voting_and_rep_user_update(add, id, 5, 'question')
+#         answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
+#
+#     if request.method == 'GET':
+#         category = request.args.get('by_category')
+#         order = request.args.get('by_order')
+#         answers_data_base = data_manager.get_sorted_data('answer', category, order, question_id)
+#
+#     accept_answer = False
+#     if flask_login.current_user.is_authenticated:
+#         user_login_in_session = flask_login.current_user.email
+#         users = data_manager.get_all_records('user_data')
+#         accept_answer = util.acceptation_answer(users, user_login_in_session, question, accept_answer)
+#
+#     if request.form.get('accept_answer'):
+#         answer_id = request.form.get('accept_answer')
+#         accept = True
+#         util.rep_user_update_after_acceptation_answer(question_id, answer_id, accept)
+#     if request.form.get('not_accept_answer'):
+#         answer_id = 0
+#         accept = False
+#         util.rep_user_update_after_acceptation_answer(question_id, answer_id, accept)
+#     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
+#     question['submission_time'] = question['submission_time'].replace(microsecond=0)
+#     answers_data_base = util.convert_time_to_readable(answers_data_base)
+#     return render_template('display_a_question.html',
+#                            question=question,
+#                            image=image,
+#                            number_of_comments_to_answer=number_of_comments_to_answer,
+#                            answers_base=answers_data_base,
+#                            comments_to_answer=comments_to_answer,
+#                            comments_to_question=comments_to_question,
+#                            number_of_comments_to_question=number_of_comments_to_question,
+#                            list_of_tags=list_of_tags,
+#                            accept_answer=accept_answer)
+
+
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
-
-    comments_to_answer = []
+    accept_answer = False
     data_manager.update_record(question_id, {'view_number': 1}, 'question')
     answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
-    question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
-    question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    try:
-        image = question['image']
-    except:
-        image = 'NULL'
-    for answer in answers_data_base:
-        answer['submission_time'] = answer['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    comments_to_question = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'comment')
-    for comment in comments_to_question:
-        comment['submission_time'] = comment['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-    number_of_comments_to_question = len(comments_to_question)
-    for answer in answers_data_base:
-        comment_to_answer = data_manager.get_records_by_foreign_key({'answer_id': answer['id']}, 'comment')
-        if comment_to_answer != []:
-            comments_to_answer.append(comment_to_answer)
-    number_of_comments_to_answer = len(comments_to_answer)
-    list_of_tags = []
-    list_of_tag_id = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'question_tag',  statement='tag_id')
-    for tag_id in list_of_tag_id:
-        list_of_tags.append([data_manager.get_records_by_foreign_key({'id': tag_id['tag_id']}, 'tag', statement='name'),tag_id['tag_id']])
-
-    if request.method == 'POST':
-        if request.form.get('vote_answer'):
-            id = request.form['vote_answer']
-            add = int(request.form['vote'])
-            if add == -1:
-                user_id = data_manager.get_user_id_by_answer_id(id)['user_id']
-                if user_id is not None:
-                    data_manager.change_user_rep_value(user_id, '-', 2)
-            if add == 1:
-                user_id = data_manager.get_user_id_by_answer_id(id)['user_id']
-                if user_id is not None:
-                    data_manager.change_user_rep_value(user_id, '+', 10)
-            data_manager.update_record(id, {'vote_number': add}, 'answer')
-        if request.form.get('vote_question'):
-            id = request.form['vote_question']
-            add = int(request.form['vote'])
-            if add == -1:
-                user_id = data_manager.get_user_id_by_question_id(id)['user_id']
-                if user_id is not None:
-                    data_manager.change_user_rep_value(user_id, '-', 2)
-            if add == 1:
-                user_id = data_manager.get_user_id_by_question_id(id)['user_id']
-                if user_id is not None:
-                    data_manager.change_user_rep_value(user_id, '+', 5)
-            data_manager.update_record(id, {'vote_number': add}, 'question')
-            return redirect(f'/question/{question_id}')
-        answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
-
-    if request.method == 'GET':
-        category = request.args.get('by_category')
-        order = request.args.get('by_order')
-        answers_data_base = data_manager.get_sorted_data('answer', category, order, question_id)
-
-    accept_answer = False
-    if flask_login.current_user.is_authenticated:
-        user_login_in_session = flask_login.current_user.email
-        users = data_manager.get_all_records('user_data')
-        for realdict in users:
-            if user_login_in_session == realdict['login'] and realdict['id'] == question['user_id']:
-                accept_answer = True
-    if request.form.get('accept_answer'):
-        accepted_answer_id = data_manager.get_current_accepted_answer(question_id)['accepted_answer']
-        if accepted_answer_id is not None:
-            user_id = data_manager.get_user_id_by_answer_id(accepted_answer_id)['user_id']
-            if user_id is not None:
-                data_manager.change_user_rep_value(user_id, '-', 15)
-        answer_id = request.form.get('accept_answer')
-        data_manager.add_accepted_answer_to_question_bd(answer_id, question_id)
-        user_id = data_manager.get_user_id_by_answer_id(answer_id)['user_id']
-        if user_id is not None:
-            data_manager.change_user_rep_value(user_id, '+', 15)
-    if request.form.get('not_accept_answer'):
-        accepted_answer_id = data_manager.get_current_accepted_answer(question_id)
-        user_id = data_manager.get_user_id_by_answer_id(accepted_answer_id['accepted_answer'])['user_id']
-        data_manager.add_accepted_answer_to_question_bd("NULL", question_id)
-        if user_id is not None:
-            data_manager.change_user_rep_value(user_id, '-', 15)
+    answers_data_base = util.convert_time_to_readable(answers_data_base)
     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
     question['submission_time'] = question['submission_time'].replace(microsecond=0)
-    for answer in answers_data_base:
-        answer['submission_time'] = answer['submission_time'].replace(microsecond=0)
+    comments_to_question = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'comment')
+    number_of_comments_to_question = len(comments_to_question)
+    comments_to_question = util.convert_time_to_readable(comments_to_question)
+    image = util.get_image(question)
+    list_of_tags, comments_to_answer = util.get_all_comments_to_answer(answers_data_base, question_id)
     return render_template('display_a_question.html',
                            question=question,
                            image=image,
-                           number_of_comments_to_answer=number_of_comments_to_answer,
-                           answers_base=answers_data_base, comments_to_answer=comments_to_answer,
+                           answers_base=answers_data_base,
+                           comments_to_answer=comments_to_answer,
                            comments_to_question=comments_to_question,
                            number_of_comments_to_question=number_of_comments_to_question,
                            list_of_tags=list_of_tags,
                            accept_answer=accept_answer)
+
+
+def vote_and_user_rep_change(question_id):
+    if request.method == 'POST':
+        if request.form.get('vote_answer'):
+            id = request.form['vote_answer']
+            add = int(request.form['vote'])
+            util.voting_and_rep_user_update(add, id, 10, 'answer')
+        if request.form.get('vote_question'):
+            id = request.form['vote_question']
+            add = int(request.form['vote'])
+            util.voting_and_rep_user_update(add, id, 5, 'question')
+    question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
+    question['submission_time'] = question['submission_time'].replace(microsecond=0)
+    answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
+    answers_data_base = util.convert_time_to_readable(answers_data_base)
+    return render_template('display_a_question.html',
+                           question=question,
+                           answers_data_base=answers_data_base)
+
+
+def sort_answers(question_id, answers_data_base):
+    if request.method == 'GET':
+        category = request.args.get('by_category')
+        order = request.args.get('by_order')
+        answers_data_base = data_manager.get_sorted_data('answer', category, order, question_id)
+    return render_template('display_a_question.html', answers_base=answers_data_base)
+
+
+def is_accepted_answer(question, accept_answer, question_id):
+    if flask_login.current_user.is_authenticated:
+        user_login_in_session = flask_login.current_user.email
+        users = data_manager.get_all_records('user_data')
+        accept_answer = util.acceptation_answer(users, user_login_in_session, question, accept_answer)
+
+    if request.form.get('accept_answer'):
+        answer_id = request.form.get('accept_answer')
+        util.rep_user_update_after_acceptation_answer(question_id, answer_id, True)
+    if request.form.get('not_accept_answer'):
+        util.rep_user_update_after_acceptation_answer(question_id, None, False)
+    return render_template('display_a_question.html', accept_answer=accept_answer)
 
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -243,12 +264,10 @@ def edit_question(question_id):
         new_question = request.form['message']
         new_question = util.add_apostrophe(new_question)
         file = request.files['file']
-        if file:
-            if util.allowed_file(file.filename):
-                file.save(UPLOAD_FOLDER / file.filename)
-                file = file.filename
-            else:
-                file = question_data['image']
+
+        if util.allowed_file(file.filename):
+            file.save(UPLOAD_FOLDER / file.filename)
+            file = file.filename
         else:
             file = question_data['image']
         data_manager.update_record(question_id, {'title': new_title, 'message': new_question, 'image': file }, 'question')
