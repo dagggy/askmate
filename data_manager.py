@@ -134,18 +134,13 @@ def get_comments_written_by_user(cursor, user_id):
                     WHEN question_id IS NOT NULL THEN question_id
                     ELSE (select distinct answer.question_id from comment
                             join answer on comment.answer_id = answer.id
-                            where comment.user_id=3)
+                            where comment.user_id=3) -- zmienić
                     END AS question_id
             FROM comment
             WHERE user_id = '{user_id}';
             """)
     return cursor.fetchall()
-'''
-select A.name
-     ,(Case A.id=2 then select C.ID from TableThree C left join A.id=C.id end)
-from TableOne A
-left join TabletTwo B
-on A.id=B.id'''
+
 
 ##############################################
 @database_common.connection_handler
