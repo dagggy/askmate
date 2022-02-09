@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oops!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home_page_style.css') }}">
+</head>
+<body>
+<div class="menu">
+    <ul class="menu-bar">
+        <li class="menu-item-logo" style="pointer-events: none !important;"><a href="/">Ask Mate | Home</a></li>
+        <li class="menu-item"><a href="/">Home</a></li>
+        <li class="menu-item"><a href="/list">Questions</a></li>
+        <li class="menu-item"><a href="/tags">Tags</a></li>
+        <li class="menu-item"><a href="/users">Users List</a></li>
+        {% if not current_user.is_authenticated %}
+            <li class="menu-item"><a href="/add_question">Add question</a></li>
+            <li class="menu-item" style="float: right; background-color:#EAB722"><a href="/login">LogIN</a></li>
+            <li class="menu-item-button" style="float: right; background-color:#F7DD72"><a
+                    href="/registration">SignUP</a>
+            </li>
+        {% else %}
+            <li class="menu-item" style="float: right; background-color:#D36D00;"><a href="/logout">LogOUT</a></li>
+            <li class="menu-item" style="float: right;"><a href="/user/{{ current_user.db_id }}">See statistics:
+                {{ (current_user.email).split('@')[0] }}</a></li>
+        {% endif %}
+    </ul>
+</div>
+<div>
+    <table class="questions_table" id="questions_table">
+        <tr>
+            <td>
+                <h1>Unauthorized</h1>
+                <p>Please log in.</p>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -48,64 +48,6 @@ def list_question_page():
     return render_template('list_questions.html', data=data, headers=QUESTION_TABLE_HEADERS)
 
 
-# @app.route('/question/<question_id>', methods=['GET', 'POST'])
-# def display_question_with_answers(question_id):
-#     data_manager.update_record(question_id, {'view_number': 1}, 'question')
-#     answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
-#     answers_data_base = util.convert_time_to_readable(answers_data_base)
-#     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
-#     question['submission_time'] = question['submission_time'].strftime("%d/%m/%Y %H:%M:%S")
-#     comments_to_question = data_manager.get_records_by_foreign_key({'question_id': question_id}, 'comment')
-#     number_of_comments_to_question = len(comments_to_question)
-#     comments_to_question = util.convert_time_to_readable(comments_to_question)
-#     image = util.get_image(question)
-#     number_of_comments_to_answer, list_of_tags, comments_to_answer = util.get_all_comments_to_answer(answers_data_base, question_id)
-#
-#     if request.method == 'POST':
-#         if request.form.get('vote_answer'):
-#             id = request.form['vote_answer']
-#             add = int(request.form['vote'])
-#             util.voting_and_rep_user_update(add, id, 10, 'answer')
-#         if request.form.get('vote_question'):
-#             id = request.form['vote_question']
-#             add = int(request.form['vote'])
-#             util.voting_and_rep_user_update(add, id, 5, 'question')
-#         answers_data_base = data_manager.get_sorted_data('answer', question_id=question_id)
-#
-#     if request.method == 'GET':
-#         category = request.args.get('by_category')
-#         order = request.args.get('by_order')
-#         answers_data_base = data_manager.get_sorted_data('answer', category, order, question_id)
-#
-#     accept_answer = False
-#     if flask_login.current_user.is_authenticated:
-#         user_login_in_session = flask_login.current_user.email
-#         users = data_manager.get_all_records('user_data')
-#         accept_answer = util.acceptation_answer(users, user_login_in_session, question, accept_answer)
-#
-#     if request.form.get('accept_answer'):
-#         answer_id = request.form.get('accept_answer')
-#         accept = True
-#         util.rep_user_update_after_acceptation_answer(question_id, answer_id, accept)
-#     if request.form.get('not_accept_answer'):
-#         answer_id = 0
-#         accept = False
-#         util.rep_user_update_after_acceptation_answer(question_id, answer_id, accept)
-#     question = data_manager.get_record_by_primary_key({'id': question_id}, 'question')
-#     question['submission_time'] = question['submission_time'].replace(microsecond=0)
-#     answers_data_base = util.convert_time_to_readable(answers_data_base)
-#     return render_template('display_a_question.html',
-#                            question=question,
-#                            image=image,
-#                            number_of_comments_to_answer=number_of_comments_to_answer,
-#                            answers_base=answers_data_base,
-#                            comments_to_answer=comments_to_answer,
-#                            comments_to_question=comments_to_question,
-#                            number_of_comments_to_question=number_of_comments_to_question,
-#                            list_of_tags=list_of_tags,
-#                            accept_answer=accept_answer)
-
-
 @app.route('/question/<question_id>', methods=['GET', 'POST'])
 def display_question_with_answers(question_id):
     accept_answer = False
@@ -494,8 +436,7 @@ def logout():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return BACK_TO_HOME + '''<h1>Unauthorized</h1><br>
-    '''
+    return render_template('error.html')
 
 
 class User(flask_login.UserMixin):
